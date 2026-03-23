@@ -547,115 +547,6 @@
             overflow: hidden;
             background: #fff;
             border-radius: 4px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        }
-
-        #qrImage {
-            width: 110% !important; /* Adjust zoom for new screenshot */
-            max-width: none !important;
-            position: absolute;
-            top: 48%; /* Adjust center for new screenshot */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .modal-title {
-            color: #00ffff;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-transform: lowercase;
-        }
-
-        .modal-subtitle {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #666;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* iOS App Picker Styles */
-        .picker-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1100;
-            backdrop-filter: blur(8px);
-        }
-
-        .picker-content {
-            width: 90%;
-            max-width: 320px;
-            text-align: center;
-        }
-
-        .picker-title {
-            color: #00ffff;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            margin-bottom: 30px;
-            text-transform: lowercase;
-        }
-
-        .picker-option {
-            background: #111;
-            border: 1px solid #1a1a1a;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .picker-option:hover {
-            border-color: #00ffff;
-            background: #161616;
-            transform: translateY(-2px);
-        }
-
-        .picker-close {
-            margin-top: 20px;
-            color: #444;
-            font-size: 11px;
-            cursor: pointer;
-            text-decoration: underline;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Responsive UPI visibility */
-        .upi-mobile-link {
-            display: none;
-        }
-
-        .upi-desktop-qr {
-            display: inline-flex;
-        }
-
-        @media (max-width: 768px) {
-            .upi-mobile-link {
-                display: inline-flex;
-            }
-            .upi-desktop-qr {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 
@@ -920,43 +811,6 @@
                 });
             });
         });
-
-        function openUPI() {
-            const upiId = 'ryyansafar@sbi';
-            const name = 'Ryyan';
-            const currency = 'INR';
-            
-            const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&cu=${currency}`;
-            
-            const isAndroid = /android/i.test(navigator.userAgent);
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-            if (isAndroid) {
-                window.location.href = `intent://pay?${upiString}#Intent;scheme=upi;end`;
-            } else if (isIOS) {
-                // Show App Picker for iOS to bypass WhatsApp Pay default
-                const picker = document.getElementById('iosAppPicker');
-                const gpay = document.getElementById('linkGpay');
-                const phonepe = document.getElementById('linkPhonepe');
-                const paytm = document.getElementById('linkPaytm');
-
-                gpay.href = `tez://pay?${upiString}`;
-                phonepe.href = `phonepe://pay?${upiString}`;
-                paytm.href = `paytmmp://pay?${upiString}`;
-
-                picker.style.display = 'flex';
-            } else {
-                window.location.href = `upi://pay?${upiString}`;
-            }
-        }
-
-        function closePicker() {
-            document.getElementById('iosAppPicker').style.display = 'none';
-        }
-
-        function toggleQR(show) {
-            document.getElementById('qrModal').style.display = show ? 'flex' : 'none';
-        }
     </script>
 
     <div class="footer">
@@ -983,7 +837,5 @@
         </div>
         <div style="font-style: italic;">coded with claude - cuz enikk padikkanam and enikk samayam illa</div>
     </div>
-</body>
-</html>
 </body>
 </html>
