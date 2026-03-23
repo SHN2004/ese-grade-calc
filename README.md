@@ -23,7 +23,7 @@ A minimalist, responsive, and sleek web tool to calculate your End Semester Exam
 
 ## 🛠 Usage
 
-1. **Access the App**: Since this is a static webpage, simply open `grade_calculator.html` in your favorite web browser. You can also host it via GitHub Pages.
+1. **Access the App**: Since this is a static webpage, simply open `index.html` in your favorite web browser. You can also host it via GitHub Pages.
 2. **Setup a Subject**: 
     - Click one of the quick-presets (`theory course`, `integrated course`, or `lab course`) to automatically fill max marks.
     - Enter the `subject_name` (e.g. EC600A-B2).
