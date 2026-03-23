@@ -488,7 +488,9 @@
             border-radius: 4px;
             background: #0a0a0a;
             transition: all 0.2s;
-            /* Tabs Styling */
+        }
+
+        /* Tabs Styling */
         .tabs {
             display: flex;
             gap: 20px;
@@ -892,10 +894,134 @@
                 input.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
                         addSubject();
+                        addAttendanceSubject();
                     }
                 });
             });
         });
+
+        // Attendance Logic
+        let attendanceSubjects = [];
+
+        function addAttendanceSubject() {
+            const nameInput = document.getElementById('attSubjectName');
+            const totalInput = document.getElementById('attTotalClasses');
+            const missedInput = document.getElementById('attMissedClasses');
+            const minInput = document.getElementById('attMinReq');
+
+            const name = nameInput.value.trim();
+            const total = parseInt(totalInput.value);
+            const missed = parseInt(missedInput.value);
+            const minReq = parseFloat(minInput.value);
+
+            if (!name || isNaN(total) || isNaN(missed) || isNaN(minReq)) return;
+
+            if (missed > total) {
+                alert('missed classes cant be more than total classes');
+                return;
+            }
+
+            attendanceSubjects.push({ name, total, missed, minReq });
+
+            nameInput.value = '';
+            totalInput.value = '';
+            missedInput.value = '';
+            nameInput.focus();
+
+            renderAttendanceSubjects();
+        }
+
+        function deleteAttendanceSubject(index) {
+            attendanceSubjects.splice(index, 1);
+            renderAttendanceSubjects();
+        }
+
+        function renderAttendanceSubjects() {
+            const container = document.getElementById('attendanceContainer');
+
+            if (attendanceSubjects.length === 0) {
+                container.innerHTML = '<div class="empty-state">no subjects tracked yet. add yours above.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            attendanceSubjects.forEach((subject, index) => {
+                const attended = subject.total - subject.missed;
+                const percentage = ((attended / subject.total) * 100).toFixed(1);
+                const isSafe = parseFloat(percentage) >= subject.minReq;
+                
+                let statusMsg = '';
+                let statusClass = isSafe ? 'safe' : 'danger';
+                
+                if (isSafe) {
+                    const safeMisses = Math.floor((attended * 100 / subject.minReq) - subject.total);
+                    statusMsg = safeMisses > 0 
+                        ? `you can miss <strong>${safeMisses}</strong> more classes safely`
+                        : `you are on the limit! can't miss any more classes`;
+                } else {
+                    const recovery = Math.ceil((subject.minReq * subject.total - 100 * attended) / (100 - subject.minReq));
+                    statusMsg = `shortage! must attend <strong>${recovery}</strong> classes consecutively to recover`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'subject';
+                card.style.borderLeftColor = isSafe ? '#00ff88' : '#ff4444';
+                card.innerHTML = `
+                    <div class="subject-top">
+                        <div class="subject-name" style="color: ${isSafe ? '#00ff88' : '#ff4444'}">${subject.name} ${isSafe ? '✅' : '❌'}</div>
+                        <button class="btn-delete" onclick="deleteAttendanceSubject(${index})">delete</button>
+                    </div>
+                    
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span>attended:</span>
+                            <span style="color: #e0e0e0">${attended}/${subject.total}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>current_%:</span>
+                            <span style="color: ${isSafe ? '#00ff88' : '#ff4444'}">${percentage}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>min_req:</span>
+                            <span style="color: #666">${subject.minReq}%</span>
+                        </div>
+                    </div>
+
+                    <div class="pass-alert ${statusClass}">${statusMsg}</div>
+                    
+                    <div class="grades-table" style="overflow-x: auto;">
+                        <div class="info-title" style="margin-top: 10px; font-size: 11px;">attendance projection grid (total classes →)</div>
+                        <table style="min-width: 600px;">
+                            <thead>
+                                <tr>
+                                    <th>missed \\ total</th>
+                                    ${Array.from({length: 8}, (_, i) => `<th>+${i*2}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Array.from({length: 6}, (_, m) => {
+                                    const mCount = subject.missed + m;
+                                    return `
+                                        <tr>
+                                            <td style="color: #666; font-weight: bold;">${mCount} missed</td>
+                                            ${Array.from({length: 8}, (_, t) => {
+                                                const tCount = subject.total + (t * 2);
+                                                const p = (((tCount - mCount) / tCount) * 100).toFixed(1);
+                                                const ok = parseFloat(p) >= subject.minReq;
+                                                return `<td style="color: ${ok ? '#00ff88' : '#ff4444'}">${p}% ${ok ? '✅' : '❌'}</td>`;
+                                            }).join('')}
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
     </script>
 
     <div class="footer">
