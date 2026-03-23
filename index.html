@@ -996,7 +996,7 @@
                             <thead>
                                 <tr>
                                     <th>missed \\ total</th>
-                                    ${Array.from({length: 8}, (_, i) => `<th>${subject.total + (i*2)}</th>`).join('')}
+                                    ${Array.from({length: 11}, (_, i) => `<th>${subject.total + i}</th>`).join('')}
                                 </tr>
                             </thead>
                             <tbody>
@@ -1005,8 +1005,8 @@
                                     return `
                                         <tr>
                                             <td style="color: #666; font-weight: bold;">${mCount} missed</td>
-                                            ${Array.from({length: 8}, (_, t) => {
-                                                const tCount = subject.total + (t * 2);
+                                            ${Array.from({length: 11}, (_, t) => {
+                                                const tCount = subject.total + t;
                                                 const p = (((tCount - mCount) / tCount) * 100).toFixed(1);
                                                 const ok = parseFloat(p) >= subject.minReq;
                                                 return `<td style="color: ${ok ? '#00ff88' : '#ff4444'}">${p}% ${ok ? '✅' : '❌'}</td>`;
