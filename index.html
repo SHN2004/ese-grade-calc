@@ -493,11 +493,85 @@
             transform: translateY(-1px);
         }
 
-        .upi-id {
-            display: block;
-            font-size: 10px;
+        /* QR Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border: 1px solid #1a1a1a;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
             color: #444;
-            margin-top: 4px;
+            font-size: 20px;
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        .modal-close:hover {
+            color: #00ffff;
+        }
+
+        #qrImage {
+            width: 100%;
+            max-width: 280px;
+            margin: 20px 0;
+            border-radius: 4px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .modal-title {
+            color: #00ffff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: lowercase;
+        }
+
+        .modal-subtitle {
+            font-size: 11px;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Responsive UPI visibility */
+        .upi-mobile-link {
+            display: none;
+        }
+
+        .upi-desktop-qr {
+            display: inline-flex;
+        }
+
+        @media (max-width: 768px) {
+            .upi-mobile-link {
+                display: inline-flex;
+            }
+            .upi-desktop-qr {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -763,16 +837,18 @@
                 });
             });
 
-            // Obfuscated UPI Injection
-            // Base64 for 'safarryyan@oksbi'
-            const encodedUPI = 'c2FmYXJyeXlhbkBva3NiaQ==';
+            // Mobile UPI Link Injection
+            const encodedUPI = 'c2FmYXJyeXlhbi0xQG9rc2Jp'; // safarryyan-1@oksbi from the image
             const decodedUPI = atob(encodedUPI);
-            const upiLink = document.getElementById('upiLink');
-            const upiDisplay = document.getElementById('upiDisplay');
-            
-            if (upiLink) upiLink.href = `upi://pay?pa=${decodedUPI}&pn=Ryyan%20Safar&cu=INR`;
-            if (upiDisplay) upiDisplay.textContent = decodedUPI;
+            const upiMobileLink = document.getElementById('upiMobileLink');
+            if (upiMobileLink) {
+                upiMobileLink.href = `upi://pay?pa=${decodedUPI}&pn=Ryyan%20Safar&cu=INR`;
+            }
         });
+
+        function toggleQR(show) {
+            document.getElementById('qrModal').style.display = show ? 'flex' : 'none';
+        }
     </script>
 
     <div class="footer">
@@ -783,7 +859,24 @@
                 </svg>
                 view source on github
             </a>
-            <a id="upiLink" href="#" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
+
+            <!-- Desktop QR Trigger -->
+            <a href="javascript:void(0)" onclick="toggleQR(true)" class="upi-desktop-qr" style="margin-bottom: 0;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        support with upi
+                    </div>
+                </div>
+            </a>
+
+            <!-- Mobile Direct Link -->
+            <a id="upiMobileLink" href="#" target="_blank" rel="noopener noreferrer" class="upi-mobile-link" style="margin-bottom: 0;">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -792,11 +885,23 @@
                         </svg>
                         support with upi
                     </div>
-                    <span id="upiDisplay" class="upi-id">loading...</span>
                 </div>
             </a>
         </div>
         <div style="font-style: italic;">coded with claude - cuz enikk padikkanam and enikk samayam illa</div>
     </div>
+
+    <!-- QR Modal -->
+    <div id="qrModal" class="modal-overlay" onclick="if(event.target === this) toggleQR(false)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="toggleQR(false)">&times;</span>
+            <div class="modal-title">scan to support</div>
+            <div class="modal-subtitle">Ryyan Safar / @oksbi</div>
+            <img src="PHOTO-2026-03-23-20-03-17.jpg" alt="UPI QR Code" id="qrImage">
+            <div class="modal-subtitle">scan with any upi app</div>
+        </div>
+    </div>
+</body>
+</html>
 </body>
 </html>
