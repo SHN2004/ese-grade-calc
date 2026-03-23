@@ -577,6 +577,68 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        /* iOS App Picker Styles */
+        .picker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+            backdrop-filter: blur(8px);
+        }
+
+        .picker-content {
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .picker-title {
+            color: #00ffff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-transform: lowercase;
+        }
+
+        .picker-option {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .picker-option:hover {
+            border-color: #00ffff;
+            background: #161616;
+            transform: translateY(-2px);
+        }
+
+        .picker-close {
+            margin-top: 20px;
+            color: #444;
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: underline;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         /* Responsive UPI visibility */
         .upi-mobile-link {
             display: none;
@@ -872,10 +934,24 @@
             if (isAndroid) {
                 window.location.href = `intent://pay?${upiString}#Intent;scheme=upi;end`;
             } else if (isIOS) {
-                window.location.href = `upi://pay?${upiString}`;
+                // Show App Picker for iOS to bypass WhatsApp Pay default
+                const picker = document.getElementById('iosAppPicker');
+                const gpay = document.getElementById('linkGpay');
+                const phonepe = document.getElementById('linkPhonepe');
+                const paytm = document.getElementById('linkPaytm');
+
+                gpay.href = `tez://pay?${upiString}`;
+                phonepe.href = `phonepe://pay?${upiString}`;
+                paytm.href = `paytmmp://pay?${upiString}`;
+
+                picker.style.display = 'flex';
             } else {
                 window.location.href = `upi://pay?${upiString}`;
             }
+        }
+
+        function closePicker() {
+            document.getElementById('iosAppPicker').style.display = 'none';
         }
 
         function toggleQR(show) {
@@ -932,6 +1008,27 @@
                 <img src="Screenshot 2026-03-23 at 20.14.10.png" alt="UPI QR Code" id="qrImage">
             </div>
             <div class="modal-subtitle">scan with any upi app</div>
+        </div>
+    </div>
+
+    <!-- iOS App Picker -->
+    <div id="iosAppPicker" class="picker-overlay" onclick="if(event.target === this) closePicker()">
+        <div class="picker-content">
+            <div class="picker-title">select payment app</div>
+            
+            <a id="linkGpay" href="#" class="picker-option">
+                <span>google pay</span>
+            </a>
+            
+            <a id="linkPhonepe" href="#" class="picker-option">
+                <span>phonepe</span>
+            </a>
+            
+            <a id="linkPaytm" href="#" class="picker-option">
+                <span>paytm</span>
+            </a>
+
+            <div class="picker-close" onclick="closePicker()">close</div>
         </div>
     </div>
 </body>
