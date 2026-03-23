@@ -859,26 +859,22 @@
             });
         });
 
-        function handleUPIPayment() {
+        function openUPI() {
             const upiId = 'ryyansafar@sbi';
-            const name = 'Ryyan Safar';
+            const name = 'Ryyan';
             const currency = 'INR';
             
             const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&cu=${currency}`;
-            const standardUrl = `upi://pay?${upiString}`;
             
             const isAndroid = /android/i.test(navigator.userAgent);
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
             if (isAndroid) {
-                // More reliable Android Intent scheme
-                window.location.href = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;S.browser_fallback_url=${encodeURIComponent(standardUrl)};end`;
+                window.location.href = `intent://pay?${upiString}#Intent;scheme=upi;end`;
             } else if (isIOS) {
-                // Standard iOS scheme
-                window.location.href = standardUrl;
+                window.location.href = `upi://pay?${upiString}`;
             } else {
-                // Fallback for others
-                window.location.href = standardUrl;
+                window.location.href = `upi://pay?${upiString}`;
             }
         }
 
@@ -912,7 +908,7 @@
             </a>
 
             <!-- Mobile Direct Link -->
-            <a href="javascript:void(0)" onclick="handleUPIPayment()" class="upi-mobile-link" style="margin-bottom: 0;">
+            <a href="javascript:void(0)" onclick="openUPI(); return false;" class="upi-mobile-link" style="margin-bottom: 0;">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
