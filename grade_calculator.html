@@ -595,10 +595,13 @@
             const totalMarks = maxSessional + maxESE;
             const targetTotal = (targetPercentage / 100) * totalMarks;
             const requiredESE = targetTotal - currentMarks;
+            
+            // Min ESE is 40% of maxESE (e.g., 40 for 100, 30 for 75)
+            const minESE = 0.4 * maxESE;
 
             return {
                 required: Math.ceil(requiredESE),
-                possible: requiredESE <= maxESE && requiredESE >= 40
+                possible: requiredESE <= maxESE && requiredESE >= minESE
             };
         }
 
@@ -649,6 +652,7 @@
             subjects.forEach((subject, index) => {
                 const totalMarks = subject.maxSess + subject.maxESE;
                 const currentPercentage = ((subject.current / totalMarks) * 100).toFixed(1);
+                const minESEThreshold = 0.4 * subject.maxESE;
 
                 let resultsHTML = '';
 
@@ -658,11 +662,17 @@
                     let note = '';
 
                     if (!result.possible) {
-                        eseClass += ' impossible';
-                        note = '<span class="note">impossible</span>';
-                    } else if (result.required < 40) {
-                        eseClass += ' warning';
-                        note = '<span class="note">below min ese</span>';
+                        if (result.required > subject.maxESE) {
+                            eseClass += ' impossible';
+                            note = '<span class="note">impossible</span>';
+                        } else {
+                            eseClass += ' warning';
+                            note = `<span class="note">below min ${minESEThreshold}</span>`;
+                        }
+                    } else if (result.required < minESEThreshold) {
+                         // This case is actually covered by the !possible logic now, but keeping for safety
+                         eseClass += ' warning';
+                         note = `<span class="note">below min ${minESEThreshold}</span>`;
                     }
 
                     resultsHTML += `
@@ -670,24 +680,24 @@
                             <td><span class="grade-tag ${grade.color}">${grade.grade}</span></td>
                             <td>${grade.point}</td>
                             <td>${grade.min}%</td>
-                            <td><span class="${eseClass}">${result.possible ? result.required : '—'}</span>${note}</td>
+                            <td><span class="${eseClass}">${(result.required <= subject.maxESE) ? Math.max(result.required, minESEThreshold) : '—'}</span>${note}</td>
                         </tr>
                     `;
                 });
 
-                const minESEResult = calculateRequiredESE(subject.current, subject.maxSess, subject.maxESE, 50);
+                const passResult = calculateRequiredESE(subject.current, subject.maxSess, subject.maxESE, 50);
                 let passMessage = '';
                 let passClass = '';
 
-                if (minESEResult.required >= 40 && minESEResult.possible) {
-                    passMessage = `need ${minESEResult.required}/100 in ese to pass`;
-                    passClass = 'pass-alert';
-                } else if (minESEResult.required < 40) {
-                    passMessage = `any score ≥40/100 in ese will pass`;
+                if (passResult.required > subject.maxESE) {
+                    passMessage = `cannot pass even with ${subject.maxESE}/${subject.maxESE} in ese`;
+                    passClass = 'pass-alert danger';
+                } else if (passResult.required <= minESEThreshold) {
+                    passMessage = `any score ≥${minESEThreshold}/${subject.maxESE} in ese will pass`;
                     passClass = 'pass-alert safe';
                 } else {
-                    passMessage = `cannot pass even with 100/100 in ese`;
-                    passClass = 'pass-alert danger';
+                    passMessage = `need ${passResult.required}/${subject.maxESE} in ese to pass`;
+                    passClass = 'pass-alert';
                 }
 
                 const card = document.createElement('div');
