@@ -23,48 +23,71 @@
             font-family: 'Inter', sans-serif;
             background: #0a0a0a;
             color: #e0e0e0;
-            padding: 20px;
+            padding: 24px;
             min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        body::before {
+            content: '';
+            display: block;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #ffaa00);
+            z-index: 200;
         }
 
         .header {
             max-width: 1400px;
-            margin: 0 auto 40px;
-            border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 20px;
+            margin: 0 auto 0;
+            padding: 20px 0 20px;
         }
 
         .brand {
             display: flex;
             align-items: baseline;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .brand h1 {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 28px;
+            font-size: 38px;
             font-weight: 700;
             color: #00ffff;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
         }
 
         .brand .slash {
-            color: #333;
-            font-size: 24px;
+            color: #2a2a2a;
+            font-size: 30px;
         }
 
         .brand .author {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            color: #666;
+            font-size: 17px;
+            color: #555;
             font-weight: 400;
         }
 
         .subtitle {
-            font-size: 14px;
-            color: #666;
+            font-size: 15px;
+            color: #555;
             font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.3px;
+            margin-top: 4px;
+        }
+
+        .cursor {
+            color: #00ffff;
+            animation: blink 1.2s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         .container {
@@ -75,16 +98,16 @@
         .info-box {
             background: #111;
             border-left: 3px solid #00ffff;
-            padding: 20px;
+            padding: 20px 24px;
             margin-bottom: 20px;
             font-family: 'JetBrains Mono', monospace;
         }
 
         .info-title {
             color: #00ffff;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .info-box ul {
@@ -94,11 +117,12 @@
         }
 
         .info-box li {
-            color: #999;
-            font-size: 12px;
-            padding: 6px 0;
-            padding-left: 16px;
+            color: #bbb;
+            font-size: 14px;
+            padding: 8px 0;
+            padding-left: 22px;
             position: relative;
+            line-height: 1.7;
         }
 
         .info-box li::before {
@@ -133,22 +157,23 @@
         .preset-buttons {
             display: flex;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
         }
 
         .btn-preset {
             background: transparent;
             color: #666;
-            border: 1px solid #222;
-            padding: 6px 12px;
+            border: 1px solid #252525;
+            padding: 8px 16px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .btn-preset:hover {
-            background: #0a0a0a;
+            background: #0d0d0d;
             color: #00ffff;
             border-color: #00ffff;
         }
@@ -168,19 +193,21 @@
 
         .field label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 13px;
             color: #666;
             text-transform: lowercase;
+            letter-spacing: 0.2px;
         }
 
         input {
-            background: #0a0a0a;
+            background: #0d0d0d;
             border: 1px solid #222;
             color: #e0e0e0;
-            padding: 10px 12px;
+            padding: 12px 14px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
+            font-size: 15px;
             transition: all 0.2s;
+            width: 100%;
         }
 
         input:focus {
@@ -190,20 +217,21 @@
         }
 
         input::placeholder {
-            color: #333;
+            color: #3a3a3a;
         }
 
         .btn-add {
             background: #00ffff;
             color: #0a0a0a;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 22px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             text-transform: lowercase;
+            white-space: nowrap;
         }
 
         .btn-add:hover {
@@ -241,18 +269,18 @@
 
         .subject-name {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
+            font-size: 21px;
             font-weight: 700;
             color: #00ffff;
         }
 
         .btn-delete {
             background: transparent;
-            color: #666;
+            color: #555;
             border: 1px solid #222;
-            padding: 6px 12px;
+            padding: 8px 16px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -264,12 +292,13 @@
         }
 
         .stats-bar {
-            padding: 12px 20px;
-            background: #0a0a0a;
+            padding: 16px 22px;
+            background: #0d0d0d;
             display: flex;
-            gap: 30px;
+            gap: 32px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 14px;
+            flex-wrap: wrap;
         }
 
         .stat-item span:first-child {
@@ -283,12 +312,12 @@
         }
 
         .pass-alert {
-            padding: 12px 20px;
+            padding: 14px 22px;
             background: #1a1000;
             border-top: 1px solid #1a1a1a;
             border-bottom: 1px solid #1a1a1a;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 15px;
             color: #ffaa00;
         }
 
@@ -310,7 +339,7 @@
             width: 100%;
             border-collapse: collapse;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         thead tr {
@@ -319,14 +348,16 @@
 
         th {
             text-align: left;
-            padding: 10px 12px;
+            padding: 12px 16px;
             color: #666;
             font-weight: 500;
             text-transform: lowercase;
+            font-size: 13px;
+            letter-spacing: 0.3px;
         }
 
         td {
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-bottom: 1px solid #1a1a1a;
         }
 
@@ -336,10 +367,11 @@
 
         .grade-tag {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 4px 12px;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 13px;
             border: 1px solid;
+            letter-spacing: 0.5px;
         }
 
         .grade-s {
@@ -403,12 +435,12 @@
 
         .note {
             color: #666;
-            font-size: 11px;
+            font-size: 12px;
             margin-left: 6px;
         }
 
         .edit-bar {
-            padding: 16px 20px;
+            padding: 16px 22px;
             background: #0a0a0a;
             border-top: 1px solid #1a1a1a;
             display: grid;
@@ -420,9 +452,9 @@
             background: #111;
             border: 1px solid #222;
             color: #e0e0e0;
-            padding: 8px 10px;
+            padding: 10px 12px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 14px;
             transition: all 0.2s;
         }
 
@@ -434,46 +466,44 @@
         .empty-state {
             text-align: center;
             padding: 80px 20px;
-            color: #333;
+            color: #3a3a3a;
             font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
         }
 
         .empty-state::before {
             content: '¯\\_(ツ)_/¯';
             display: block;
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 53px;
+            margin-bottom: 24px;
         }
 
         @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            table {
-                font-size: 11px;
-            }
-
-            th,
-            td {
-                padding: 8px 6px;
-            }
+            body { padding: 16px; font-size: 13px; }
+            .tabs-nav { margin: 0 -16px 24px; }
+            .tabs { padding: 0 16px; }
+            .brand h1 { font-size: 28px; }
+            .brand .author { font-size: 13px; }
+            .subtitle { font-size: 12px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .stats-bar { flex-direction: column; gap: 8px; font-size: 13px; }
+            table { font-size: 12px; }
+            th { font-size: 11px; }
+            th, td { padding: 10px 10px; }
+            .subject-name { font-size: 16px; }
+            .pass-alert { font-size: 13px; }
+            .info-box li { font-size: 13px; }
         }
 
         .footer {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: #666;
-            padding: 20px 0;
+            font-size: 13px;
+            color: #555;
+            padding: 32px 0 24px;
             border-top: 1px solid #1a1a1a;
-            line-height: 1.6;
+            line-height: 2;
         }
 
         .footer a {
@@ -482,41 +512,68 @@
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
+            gap: 8px;
+            padding: 9px 18px;
             border: 1px solid #222;
-            border-radius: 4px;
-            background: #0a0a0a;
+            background: #0d0d0d;
             transition: all 0.2s;
+            font-size: 13px;
         }
 
-        /* Tabs Styling */
+        .footer a:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.04);
+        }
+
+        /* Tabs / Navbar */
+        .tabs-nav {
+            position: sticky;
+            top: 2px; /* below the rainbow line */
+            z-index: 100;
+            background: #0a0a0a;
+            border-bottom: 1px solid #1a1a1a;
+            margin: 0 -24px 28px;
+        }
+
         .tabs {
             display: flex;
-            gap: 20px;
             max-width: 1400px;
-            margin: 0 auto 20px;
-            border-bottom: 1px solid #1a1a1a;
+            margin: 0 auto;
+            padding: 0 24px;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
 
+        .tabs::-webkit-scrollbar { display: none; }
+
         .tab {
-            padding: 12px 24px;
+            padding: 16px 24px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: #666;
+            font-size: 14px;
+            color: #555;
             cursor: pointer;
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
             text-transform: lowercase;
+            white-space: nowrap;
+            user-select: none;
         }
 
         .tab:hover {
-            color: #e0e0e0;
+            color: #ccc;
+            background: rgba(255,255,255,0.02);
         }
 
         .tab.active {
             color: #00ffff;
             border-bottom-color: #00ffff;
+            background: rgba(0, 255, 255, 0.04);
+        }
+
+        .tab.active::before {
+            content: '> ';
+            opacity: 0.6;
         }
 
         .tab-content {
@@ -558,7 +615,7 @@
             top: 10px;
             right: 15px;
             color: #444;
-            font-size: 20px;
+            font-size: 15px;
             cursor: pointer;
             font-family: monospace;
         }
@@ -581,29 +638,33 @@
 </head>
 
 <body>
-    <div class="header" style="max-width: 1400px; margin: 0 auto 40px; border-bottom: 1px solid #1a1a1a; padding-bottom: 20px; padding-top: 20px;">
-        <div class="brand" style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px;">
-            <h1 style="font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: #00ffff; letter-spacing: -1px;">grade calc</h1>
-            <span class="slash" style="color: #333; font-size: 24px;">/</span>
-            <span class="author" style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #666; font-weight: 400;">ryyan safar</span>
+    <div class="header">
+        <div class="brand">
+            <h1>grade calc</h1>
+            <span class="slash">/</span>
+            <span class="author">ryyan safar</span>
         </div>
-        <div class="subtitle">&gt; calculation tools for nammude pareekshakal</div>
+        <div class="subtitle">&gt; calculation tools for nammude pareekshakal — because RSMS won't tell you straight<span class="cursor">_</span></div>
     </div>
 
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('grades')">grade calculator</div>
-        <div class="tab" onclick="switchTab('attendance')">attendance calculator</div>
+    <div class="tabs-nav">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('grades')">grade calculator</div>
+            <div class="tab" onclick="switchTab('attendance')">attendance calculator</div>
+            <div class="tab" onclick="switchTab('cgpa')">cgpa calculator</div>
+        </div>
     </div>
 
     <!-- Grade Calculator Tab -->
     <div id="grades" class="tab-content active container">
         <div class="info-box">
-            <div class="info-title">quick notes:</div>
+            <div class="info-title">okay before you spiral — read this:</div>
             <ul>
-                <li><strong>theory courses:</strong> max sessional = 50, max ese = 100</li>
-                <li><strong>integrated courses:</strong> max sessional = 150, max ese = 100</li>
-                <li><strong>lab courses:</strong> max sessional = 75, max ese = 75</li>
-                <li><strong>tip:</strong> check RSMS for your current sessional marks before calculating</li>
+                <li><strong>theory courses:</strong> max sessional = 50, max ese = 100 (classic torture format)</li>
+                <li><strong>integrated courses:</strong> max sessional = 150, max ese = 100 (double the pain)</li>
+                <li><strong>lab courses:</strong> max sessional = 75, max ese = 75 (at least it's fair i guess)</li>
+                <li><strong>minimum ese to pass:</strong> you need at least 40% of the max ese even if your sessional is great. blame the university, not me.</li>
+                <li><strong>open RSMS first</strong> → check your current sessional marks → come back here → then panic (or don't, idk)</li>
             </ul>
         </div>
 
@@ -615,19 +676,19 @@
             </div>
             <div class="form-grid">
                 <div class="field">
-                    <label>subject_name</label>
+                    <label>subject name (whatever they call it)</label>
                     <input type="text" id="subjectName" placeholder="EC600A-B2">
                 </div>
                 <div class="field">
-                    <label>current_marks</label>
+                    <label>your marks right now</label>
                     <input type="number" id="currentMarks" placeholder="39">
                 </div>
                 <div class="field">
-                    <label>max_sessional</label>
+                    <label>max sessional marks</label>
                     <input type="number" id="maxSessional" value="50">
                 </div>
                 <div class="field">
-                    <label>max_ese</label>
+                    <label>max ese marks</label>
                     <input type="number" id="maxESE" value="100">
                 </div>
                 <div class="field">
@@ -639,38 +700,171 @@
 
         <div class="subjects-grid" id="subjectsContainer">
             <div class="empty-state">
-                no subjects yet. add one above to get started.
+                nothing here yet. add a subject above and face your destiny.
             </div>
+        </div>
+    </div>
+
+    <!-- CGPA Calculator Tab -->
+    <div id="cgpa" class="tab-content container">
+        <div class="info-box" style="border-left-color: #ffaa00;">
+            <div class="info-title" style="color: #ffaa00;">how to use this (read this once, i promise it's worth it):</div>
+            <ul>
+                <li><strong>what even is cgpa?</strong> it's just a weighted average of all your grade points, weighted by credits. that's it. nothing magical.</li>
+                <li><strong>grade point lookup:</strong> S = 10 &nbsp;·&nbsp; A+ = 9 &nbsp;·&nbsp; A = 8.5 &nbsp;·&nbsp; B+ = 8 &nbsp;·&nbsp; B = 7.5 &nbsp;·&nbsp; C+ = 7 &nbsp;·&nbsp; C = 6.5 &nbsp;·&nbsp; D = 6 &nbsp;·&nbsp; P = 5.5</li>
+                <li><strong>credits:</strong> the number next to each subject in your syllabus/timetable. theory = 3 or 4, labs = 1 or 2. check RSMS or your scheme of study document.</li>
+                <li><strong>sgpa:</strong> your semester GPA — one number for that whole semester. it's on your grade card / RSMS results page.</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="border-left-color: #00ffff; margin-top: -10px;">
+            <div class="info-title" style="color: #00ffff;">the recommended flow if you're mid-semester (e.g. S5 results just dropped):</div>
+            <ul>
+                <li><strong>step 1 →</strong> click <strong>"by semester"</strong>. add each completed semester — name (S1, S2...), SGPA from grade card, total credits that sem. repeat for all done sems.</li>
+                <li><strong>step 2 →</strong> click <strong>"by subject"</strong>. your previous CGPA and total credits will <strong>auto-fill</strong> from what you entered in step 1. no need to retype anything.</li>
+                <li><strong>step 3 →</strong> enter how many subjects you have <em>this</em> semester (count from your timetable). hit "let's go".</li>
+                <li><strong>step 4 →</strong> add each subject one by one — name, grade point (use lookup above), and credits. enter as you get results, or enter expected ones to see projections.</li>
+                <li><strong>step 5 →</strong> once all subjects are entered, your updated CGPA appears. the result is locked/greyed out until then so you don't misread a partial number.</li>
+                <li><strong>first semester?</strong> skip step 1 entirely. go straight to "by subject", put 0 for previous CGPA and 0 for previous credits.</li>
+            </ul>
+        </div>
+
+        <div class="add-section" style="border-left: 1px solid #1a1a1a;">
+            <div class="preset-buttons">
+                <button class="btn-preset" onclick="setCGPAMode('semester')" id="cgpaModeSem" style="border-color: #ffaa00; color: #ffaa00;">by semester (recommended)</button>
+                <button class="btn-preset" onclick="setCGPAMode('subject')" id="cgpaModeSub">by subject (tedious)</button>
+            </div>
+
+            <!-- Semester mode -->
+            <div id="cgpaSemesterForm">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; margin-bottom: 12px;">
+                    → find your SGPA on your grade card or RSMS portal. one row per semester, that's it.
+                </div>
+                <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                    <div class="field">
+                        <label>semester (e.g. S3, S5)</label>
+                        <input type="text" id="cgpaSemName" placeholder="S3">
+                    </div>
+                    <div class="field">
+                        <label>sgpa (from grade card)</label>
+                        <input type="number" id="cgpaSGPA" placeholder="7.8" step="0.01" min="0" max="10">
+                    </div>
+                    <div class="field">
+                        <label>total credits that sem</label>
+                        <input type="number" id="cgpaSemCredits" placeholder="22">
+                    </div>
+                    <div class="field">
+                        <label>&nbsp;</label>
+                        <button class="btn-add" onclick="addCGPASemester()" style="background: #ffaa00; color: #0a0a0a;">add sem</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject mode -->
+            <div id="cgpaSubjectForm" style="display: none;">
+
+                <!-- Step 1: Setup -->
+                <div id="cgpaSubjectSetup">
+                    <div id="cgpaAutoFillNotice" style="display: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #00ffff; background: #001a1a; border: 1px solid #003333; padding: 10px 14px; margin-bottom: 12px; line-height: 1.6;"></div>
+                    <div id="cgpaSetupHint" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; margin-bottom: 12px;">
+                        → tell us where you currently stand. just three fields and you're in.
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 140px;">
+                        <div class="field">
+                            <label>your cgpa so far (put 0 if s1/s2)</label>
+                            <input type="number" id="cgpaPrevCGPA" placeholder="7.5" step="0.01" min="0" max="10">
+                        </div>
+                        <div class="field">
+                            <label>total credits earned so far (0 if s1/s2)</label>
+                            <input type="number" id="cgpaPrevCredits" placeholder="80" min="0">
+                        </div>
+                        <div class="field">
+                            <label>how many subjects this sem?</label>
+                            <input type="number" id="cgpaNumSubjects" placeholder="6" min="1" max="20">
+                        </div>
+                        <div class="field">
+                            <label>&nbsp;</label>
+                            <button class="btn-add" onclick="startCGPASubjectMode()" style="background: #ffaa00; color: #0a0a0a;">let's go →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Subject entry (shown after setup) -->
+                <div id="cgpaSubjectEntry" style="display: none;">
+                    <div id="cgpaSubjectProgress" style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ffaa00; padding: 10px 0; margin-bottom: 12px; border-bottom: 1px solid #1a1a1a;"></div>
+                    <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                        <div class="field">
+                            <label>subject name</label>
+                            <input type="text" id="cgpaSubName" placeholder="Signals & Systems">
+                        </div>
+                        <div class="field">
+                            <label>grade point</label>
+                            <input type="number" id="cgpaSubGP" placeholder="8.5" step="0.5" min="0" max="10">
+                        </div>
+                        <div class="field">
+                            <label>credits</label>
+                            <input type="number" id="cgpaSubCredits" placeholder="4">
+                        </div>
+                        <div class="field">
+                            <label>&nbsp;</label>
+                            <button class="btn-add" id="cgpaSubAddBtn" onclick="addCGPASubject()" style="background: #ffaa00; color: #0a0a0a;">add</button>
+                        </div>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; margin-top: 10px; letter-spacing: 0.5px;">
+                        S = 10 &nbsp;·&nbsp; A+ = 9 &nbsp;·&nbsp; A = 8.5 &nbsp;·&nbsp; B+ = 8 &nbsp;·&nbsp; B = 7.5 &nbsp;·&nbsp; C+ = 7 &nbsp;·&nbsp; C = 6.5 &nbsp;·&nbsp; D = 6 &nbsp;·&nbsp; P = 5.5
+                    </div>
+                    <button class="btn-preset" onclick="resetCGPASubjectMode()" style="margin-top: 12px;">← change setup</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- CGPA Result Banner -->
+        <div id="cgpaResult" style="display: none; background: #111; border-left: 3px solid #ffaa00; padding: 22px 26px; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace;">
+            <div style="font-size: 13px; color: #555; margin-bottom: 10px;">your cgpa (so far):</div>
+            <div style="display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;">
+                <span id="cgpaValue" style="color: #ffaa00; font-size: 48px; font-weight: 700; letter-spacing: -2px;">—</span>
+                <span id="cgpaGradeLabel" style="font-size: 15px; color: #888; font-style: italic;"></span>
+            </div>
+            <div style="display: flex; gap: 32px; margin-top: 14px; font-size: 14px; flex-wrap: wrap; color: #555;">
+                <span>credits counted: <span id="cgpaTotalCredits" style="color: #e0e0e0;">0</span></span>
+                <span>sems / subjects: <span id="cgpaEntryCount" style="color: #e0e0e0;">0</span></span>
+            </div>
+        </div>
+
+        <div class="subjects-grid" id="cgpaContainer">
+            <div class="empty-state">nothing here yet. add something and we'll do the maths so you don't have to.</div>
         </div>
     </div>
 
     <!-- Attendance Calculator Tab -->
     <div id="attendance" class="tab-content container">
         <div class="info-box" style="border-left-color: #ff00ff;">
-            <div class="info-title" style="color: #ff00ff;">attendance tracker:</div>
+            <div class="info-title" style="color: #ff00ff;">attendance — the one thing that can betray you even if you study:</div>
             <ul>
-                <li><strong>minimum required:</strong> most colleges require 75% attendance</li>
-                <li><strong>safe misses:</strong> how many classes you can skip right now</li>
-                <li><strong>recovery:</strong> how many classes to attend consecutively to fix internal attendance shortage</li>
+                <li><strong>minimum required:</strong> 75% at most colleges. some departments are extra and want 85%. check with your class coordinator (or pretend you didn't know).</li>
+                <li><strong>safe misses:</strong> how many more classes you can bunk without crossing the line. use wisely. or don't. your call.</li>
+                <li><strong>shortage:</strong> you'll see how many classes you need to attend in a row to recover. yes, consecutively. no skipping in between.</li>
+                <li><strong>projection grid:</strong> shows what happens to your % as more classes happen and you miss more (or stop missing). useful for planning your bunkage strategy.</li>
             </ul>
         </div>
 
         <div class="add-section" style="border-left: 1px solid #1a1a1a;">
             <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 1fr 140px;">
                 <div class="field">
-                    <label>subject_name</label>
+                    <label>subject name</label>
                     <input type="text" id="attSubjectName" placeholder="Digital Electronics">
                 </div>
                 <div class="field">
-                    <label>total_classes</label>
+                    <label>total classes held</label>
                     <input type="number" id="attTotalClasses" placeholder="40">
                 </div>
                 <div class="field">
-                    <label>classes_missed</label>
+                    <label>classes you missed</label>
                     <input type="number" id="attMissedClasses" placeholder="5">
                 </div>
                 <div class="field">
-                    <label>min_%_req</label>
+                    <label>min % required</label>
                     <input type="number" id="attMinReq" value="75">
                 </div>
                 <div class="field">
@@ -682,7 +876,7 @@
 
         <div class="subjects-grid" id="attendanceContainer">
             <div class="empty-state">
-                no subjects tracked yet. add yours above.
+                no subjects added yet. blissful ignorance.
             </div>
         </div>
     </div>
@@ -936,6 +1130,301 @@
             renderAttendanceSubjects();
         }
 
+        // CGPA Logic
+        let cgpaMode = 'semester';
+        let cgpaEntries = [];         // semester mode: { label, gp, credits }
+        let cgpaSubjectSetup = null;  // subject mode setup: { prevCGPA, prevCredits, totalSubjects }
+        let cgpaCurrentSubjects = []; // subject mode entries: { label, gp, credits }
+
+        function populateCGPASubjectSetup() {
+            const notice = document.getElementById('cgpaAutoFillNotice');
+            const hint = document.getElementById('cgpaSetupHint');
+            if (cgpaEntries.length > 0) {
+                const totalCredits = cgpaEntries.reduce((sum, e) => sum + e.credits, 0);
+                const weightedSum = cgpaEntries.reduce((sum, e) => sum + e.gp * e.credits, 0);
+                const cgpa = totalCredits > 0 ? (weightedSum / totalCredits) : 0;
+                document.getElementById('cgpaPrevCGPA').value = cgpa.toFixed(2);
+                document.getElementById('cgpaPrevCredits').value = totalCredits;
+                const semNames = cgpaEntries.map(e => e.label).join(', ');
+                notice.textContent = `↑ auto-filled from your semester data (${semNames}) — cgpa: ${cgpa.toFixed(2)}, total credits: ${totalCredits}. just add the subject count below and hit let's go.`;
+                notice.style.display = '';
+                hint.style.display = 'none';
+            } else {
+                document.getElementById('cgpaPrevCGPA').value = '';
+                document.getElementById('cgpaPrevCredits').value = '';
+                notice.style.display = 'none';
+                hint.style.display = '';
+            }
+        }
+
+        function setCGPAMode(mode) {
+            cgpaMode = mode;
+            document.getElementById('cgpaSemesterForm').style.display = mode === 'semester' ? '' : 'none';
+            document.getElementById('cgpaSubjectForm').style.display = mode === 'subject' ? '' : 'none';
+            document.getElementById('cgpaModeSem').style.cssText = mode === 'semester'
+                ? 'border-color: #ffaa00; color: #ffaa00;' : '';
+            document.getElementById('cgpaModeSub').style.cssText = mode === 'subject'
+                ? 'border-color: #ffaa00; color: #ffaa00;' : '';
+            if (mode === 'subject') populateCGPASubjectSetup();
+            renderCGPA();
+        }
+
+        function addCGPASemester() {
+            const name = document.getElementById('cgpaSemName').value.trim();
+            const sgpa = parseFloat(document.getElementById('cgpaSGPA').value);
+            const credits = parseFloat(document.getElementById('cgpaSemCredits').value);
+
+            if (!name || isNaN(sgpa) || isNaN(credits)) { alert('fill all the fields bro'); return; }
+            if (sgpa < 0 || sgpa > 10) { alert('sgpa has to be between 0 and 10. are you okay?'); return; }
+            if (credits <= 0) { alert('credits cant be zero or negative lol'); return; }
+
+            cgpaEntries.push({ label: name, gp: sgpa, credits });
+            document.getElementById('cgpaSemName').value = '';
+            document.getElementById('cgpaSGPA').value = '';
+            document.getElementById('cgpaSemCredits').value = '';
+            renderCGPA();
+        }
+
+        function deleteCGPAEntry(index) {
+            cgpaEntries.splice(index, 1);
+            renderCGPA();
+        }
+
+        function startCGPASubjectMode() {
+            const prevCGPA = parseFloat(document.getElementById('cgpaPrevCGPA').value) || 0;
+            const prevCredits = parseFloat(document.getElementById('cgpaPrevCredits').value) || 0;
+            const numSubs = parseInt(document.getElementById('cgpaNumSubjects').value);
+
+            if (isNaN(numSubs) || numSubs <= 0) { alert('how many subjects this sem bro?'); return; }
+            if (prevCGPA < 0 || prevCGPA > 10) { alert('that cgpa doesnt look right lol'); return; }
+            if (prevCredits < 0) { alert('credits cant be negative'); return; }
+            if (prevCGPA > 0 && prevCredits === 0) {
+                alert('if you have a cgpa, you must have some credits too. put the total credits from all previous sems');
+                return;
+            }
+
+            cgpaSubjectSetup = { prevCGPA, prevCredits, totalSubjects: numSubs };
+            cgpaCurrentSubjects = [];
+            document.getElementById('cgpaSubjectSetup').style.display = 'none';
+            document.getElementById('cgpaSubjectEntry').style.display = '';
+            updateSubjectProgress();
+            renderCGPA();
+        }
+
+        function addCGPASubject() {
+            if (!cgpaSubjectSetup) return;
+            if (cgpaCurrentSubjects.length >= cgpaSubjectSetup.totalSubjects) {
+                alert('you already added all the subjects! hit "change setup" if you made a mistake');
+                return;
+            }
+
+            const name = document.getElementById('cgpaSubName').value.trim();
+            const gp = parseFloat(document.getElementById('cgpaSubGP').value);
+            const credits = parseFloat(document.getElementById('cgpaSubCredits').value);
+
+            if (!name || isNaN(gp) || isNaN(credits)) { alert('fill all the fields bro'); return; }
+            if (gp < 0 || gp > 10) { alert('grade point has to be between 0 and 10. are you okay?'); return; }
+            if (credits <= 0) { alert('credits cant be zero or negative lol'); return; }
+
+            cgpaCurrentSubjects.push({ label: name, gp, credits });
+            document.getElementById('cgpaSubName').value = '';
+            document.getElementById('cgpaSubGP').value = '';
+            document.getElementById('cgpaSubCredits').value = '';
+            document.getElementById('cgpaSubName').focus();
+            updateSubjectProgress();
+            renderCGPA();
+        }
+
+        function deleteCGPASubject(index) {
+            cgpaCurrentSubjects.splice(index, 1);
+            updateSubjectProgress();
+            renderCGPA();
+        }
+
+        function resetCGPASubjectMode() {
+            cgpaSubjectSetup = null;
+            cgpaCurrentSubjects = [];
+            document.getElementById('cgpaSubjectSetup').style.display = '';
+            document.getElementById('cgpaSubjectEntry').style.display = 'none';
+            populateCGPASubjectSetup();
+            renderCGPA();
+        }
+
+        function updateSubjectProgress() {
+            if (!cgpaSubjectSetup) return;
+            const done = cgpaCurrentSubjects.length;
+            const total = cgpaSubjectSetup.totalSubjects;
+            const remaining = total - done;
+            let msg;
+            if (done === 0) msg = `0 / ${total} subjects added. start adding below →`;
+            else if (done < total) msg = `${done} / ${total} done. ${remaining} more to go.`;
+            else msg = `all ${total} done! scroll down to see your cgpa ↓`;
+            document.getElementById('cgpaSubjectProgress').textContent = msg;
+            const btn = document.getElementById('cgpaSubAddBtn');
+            btn.disabled = done >= total;
+            btn.style.opacity = done >= total ? '0.3' : '1';
+        }
+
+        function cgpaGradeLabel(cgpa) {
+            if (cgpa >= 9.0) return '— toppar da 🤙';
+            if (cgpa >= 8.5) return '— njan impress ayi';
+            if (cgpa >= 8.0) return '— solid, keep going';
+            if (cgpa >= 7.5) return '— decent, could be worse';
+            if (cgpa >= 7.0) return '— average-ish, you\'re fine';
+            if (cgpa >= 6.5) return '— it\'s something';
+            if (cgpa >= 6.0) return '— you passed, that\'s what matters';
+            if (cgpa >= 5.5) return '— barely made it but made it';
+            return '— njan parayunilla :(';
+        }
+
+        function renderCGPA() {
+            const container = document.getElementById('cgpaContainer');
+            const resultDiv = document.getElementById('cgpaResult');
+
+            if (cgpaMode === 'semester') {
+                if (cgpaEntries.length === 0) {
+                    container.innerHTML = '<div class="empty-state">nothing here yet. add a semester up there and watch the magic happen.</div>';
+                    resultDiv.style.display = 'none';
+                    return;
+                }
+
+                const totalCredits = cgpaEntries.reduce((sum, e) => sum + e.credits, 0);
+                const weightedSum = cgpaEntries.reduce((sum, e) => sum + e.gp * e.credits, 0);
+                const cgpa = totalCredits > 0 ? (weightedSum / totalCredits) : 0;
+
+                resultDiv.style.display = '';
+                resultDiv.style.opacity = '1';
+                document.getElementById('cgpaValue').textContent = cgpa.toFixed(2);
+                document.getElementById('cgpaGradeLabel').textContent = cgpaGradeLabel(cgpa);
+                document.getElementById('cgpaTotalCredits').textContent = totalCredits;
+                document.getElementById('cgpaEntryCount').textContent = cgpaEntries.length + ' sem(s)';
+
+                const rowsHTML = cgpaEntries.map((e, i) => `
+                    <tr>
+                        <td style="color: #e0e0e0;">${e.label}</td>
+                        <td><span style="color: #ffaa00; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${e.gp.toFixed(2)}</span></td>
+                        <td style="color: #666;">${e.credits}</td>
+                        <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${(e.gp * e.credits).toFixed(2)}</td>
+                        <td><button class="btn-delete" onclick="deleteCGPAEntry(${i})">delete</button></td>
+                    </tr>
+                `).join('');
+
+                container.innerHTML = '';
+                const card = document.createElement('div');
+                card.className = 'subject';
+                card.style.borderLeftColor = '#ffaa00';
+                card.innerHTML = `
+                    <div class="subject-top">
+                        <div class="subject-name" style="color: #ffaa00;">semesters</div>
+                    </div>
+                    <div class="grades-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>semester</th>
+                                    <th>sgpa</th>
+                                    <th>credits</th>
+                                    <th>sgpa × credits</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHTML}</tbody>
+                            <tfoot>
+                                <tr style="border-top: 1px solid #333;">
+                                    <td style="color: #555; font-family: 'JetBrains Mono', monospace; padding: 10px 12px;">cgpa</td>
+                                    <td><span style="color: #ffaa00; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${cgpa.toFixed(2)}</span></td>
+                                    <td style="color: #e0e0e0; font-family: 'JetBrains Mono', monospace;">${totalCredits}</td>
+                                    <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${weightedSum.toFixed(2)}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                `;
+                container.appendChild(card);
+                return;
+            }
+
+            // --- Subject mode ---
+            if (!cgpaSubjectSetup || cgpaCurrentSubjects.length === 0) {
+                container.innerHTML = '<div class="empty-state">nothing here yet. fill in the setup above first.</div>';
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            const { prevCGPA, prevCredits, totalSubjects } = cgpaSubjectSetup;
+            const prevWeighted = prevCGPA * prevCredits;
+            const semCredits = cgpaCurrentSubjects.reduce((sum, e) => sum + e.credits, 0);
+            const semWeighted = cgpaCurrentSubjects.reduce((sum, e) => sum + e.gp * e.credits, 0);
+            const totalCredits = prevCredits + semCredits;
+            const totalWeighted = prevWeighted + semWeighted;
+            const cgpa = totalCredits > 0 ? (totalWeighted / totalCredits) : 0;
+            const isComplete = cgpaCurrentSubjects.length === totalSubjects;
+
+            resultDiv.style.display = '';
+            resultDiv.style.opacity = isComplete ? '1' : '0.35';
+            document.getElementById('cgpaValue').textContent = isComplete ? cgpa.toFixed(2) : '...';
+            document.getElementById('cgpaGradeLabel').textContent = isComplete ? cgpaGradeLabel(cgpa) : '— add all subjects first';
+            document.getElementById('cgpaTotalCredits').textContent = totalCredits;
+            document.getElementById('cgpaEntryCount').textContent = `${cgpaCurrentSubjects.length} / ${totalSubjects} subjects`;
+
+            const prevRow = prevCredits > 0 ? `
+                <tr style="border-bottom: 1px solid #222;">
+                    <td style="color: #555; font-style: italic; font-family: 'JetBrains Mono', monospace;">previous sems (base)</td>
+                    <td><span style="color: #555; font-family: 'JetBrains Mono', monospace;">${prevCGPA.toFixed(2)}</span></td>
+                    <td style="color: #555;">${prevCredits}</td>
+                    <td style="color: #444; font-family: 'JetBrains Mono', monospace;">${prevWeighted.toFixed(2)}</td>
+                    <td></td>
+                </tr>
+            ` : '';
+
+            const rowsHTML = cgpaCurrentSubjects.map((e, i) => `
+                <tr>
+                    <td style="color: #e0e0e0;">${e.label}</td>
+                    <td><span style="color: #ffaa00; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${e.gp.toFixed(2)}</span></td>
+                    <td style="color: #666;">${e.credits}</td>
+                    <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${(e.gp * e.credits).toFixed(2)}</td>
+                    <td><button class="btn-delete" onclick="deleteCGPASubject(${i})">delete</button></td>
+                </tr>
+            `).join('');
+
+            container.innerHTML = '';
+            const card = document.createElement('div');
+            card.className = 'subject';
+            card.style.borderLeftColor = isComplete ? '#ffaa00' : '#333';
+            card.innerHTML = `
+                <div class="subject-top">
+                    <div class="subject-name" style="color: ${isComplete ? '#ffaa00' : '#666'};">
+                        ${isComplete ? 'this semester — all done ✓' : `this semester — ${cgpaCurrentSubjects.length} / ${totalSubjects} added`}
+                    </div>
+                </div>
+                <div class="grades-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>subject</th>
+                                <th>grade point</th>
+                                <th>credits</th>
+                                <th>gp × credits</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>${prevRow}${rowsHTML}</tbody>
+                        <tfoot>
+                            <tr style="border-top: 1px solid #333;">
+                                <td style="color: #555; font-family: 'JetBrains Mono', monospace; padding: 10px 12px;">updated cgpa</td>
+                                <td><span style="color: ${isComplete ? '#ffaa00' : '#555'}; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${isComplete ? cgpa.toFixed(2) : '?'}</span></td>
+                                <td style="color: #e0e0e0; font-family: 'JetBrains Mono', monospace;">${totalCredits}</td>
+                                <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${totalWeighted.toFixed(2)}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
         function renderAttendanceSubjects() {
             const container = document.getElementById('attendanceContainer');
 
@@ -1025,28 +1514,35 @@
     </script>
 
     <div class="footer">
-        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap;">
-            <a href="https://github.com/ryyansafar/ese-grade-calc" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap;">
+            <a href="https://ryyansafar.github.io" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                ryyansafar.github.io
+            </a>
+
+            <a href="https://github.com/ryyansafar/ese-grade-calc" target="_blank" rel="noopener noreferrer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                 </svg>
-                view source on github
+                source on github
             </a>
 
-            <a href="https://razorpay.me/@ryyansafar" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                        <line x1="6" y1="1" x2="6" y2="4"></line>
-                        <line x1="10" y1="1" x2="10" y2="4"></line>
-                        <line x1="14" y1="1" x2="14" y2="4"></line>
-                    </svg>
-                    support me with a chai
-                </div>
+            <a href="https://razorpay.me/@ryyansafar" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                </svg>
+                buy me a chai ☕
             </a>
         </div>
-        <div style="font-style: italic;">coded with claude - cuz enikk padikkanam and enikk samayam illa</div>
+        <div style="color: #444; font-size: 12px; font-style: italic;">coded with claude — cuz enikk padikkanam and enikk samayam illa</div>
     </div>
 </body>
 </html>
