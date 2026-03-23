@@ -968,68 +968,20 @@
                 view source on github
             </a>
 
-            <!-- Desktop QR Trigger -->
-            <a href="javascript:void(0)" onclick="toggleQR(true)" class="upi-desktop-qr" style="margin-bottom: 0;">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                        </svg>
-                        support with upi
-                    </div>
-                </div>
-            </a>
-
-            <!-- Mobile Direct Link -->
-            <a href="javascript:void(0)" onclick="openUPI(); return false;" class="upi-mobile-link" style="margin-bottom: 0;">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                            <line x1="2" y1="10" x2="22" y2="10"></line>
-                        </svg>
-                        support with upi
-                    </div>
+            <a href="https://buymeachai.ezee.li/ryyansafar" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                    </svg>
+                    support me with a chai
                 </div>
             </a>
         </div>
         <div style="font-style: italic;">coded with claude - cuz enikk padikkanam and enikk samayam illa</div>
-    </div>
-
-    <!-- QR Modal -->
-    <div id="qrModal" class="modal-overlay" onclick="if(event.target === this) toggleQR(false)">
-        <div class="modal-content">
-            <span class="modal-close" onclick="toggleQR(false)">&times;</span>
-            <div class="modal-title">scan the qr</div>
-            <div class="qr-wrapper">
-                <img src="Screenshot 2026-03-23 at 20.14.10.png" alt="UPI QR Code" id="qrImage">
-            </div>
-            <div class="modal-subtitle">scan with any upi app</div>
-        </div>
-    </div>
-
-    <!-- iOS App Picker -->
-    <div id="iosAppPicker" class="picker-overlay" onclick="if(event.target === this) closePicker()">
-        <div class="picker-content">
-            <div class="picker-title">select payment app</div>
-            
-            <a id="linkGpay" href="#" class="picker-option">
-                <span>google pay</span>
-            </a>
-            
-            <a id="linkPhonepe" href="#" class="picker-option">
-                <span>phonepe</span>
-            </a>
-            
-            <a id="linkPaytm" href="#" class="picker-option">
-                <span>paytm</span>
-            </a>
-
-            <div class="picker-close" onclick="closePicker()">close</div>
-        </div>
     </div>
 </body>
 </html>
