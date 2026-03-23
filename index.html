@@ -762,6 +762,16 @@
                     }
                 });
             });
+
+            // Obfuscated UPI Injection
+            // Base64 for 'safarryyan@oksbi'
+            const encodedUPI = 'c2FmYXJyeXlhbkBva3NiaQ==';
+            const decodedUPI = atob(encodedUPI);
+            const upiLink = document.getElementById('upiLink');
+            const upiDisplay = document.getElementById('upiDisplay');
+            
+            if (upiLink) upiLink.href = `upi://pay?pa=${decodedUPI}&pn=Ryyan%20Safar&cu=INR`;
+            if (upiDisplay) upiDisplay.textContent = decodedUPI;
         });
     </script>
 
@@ -773,7 +783,7 @@
                 </svg>
                 view source on github
             </a>
-            <a href="upi://pay?pa=safarryyan@oksbi&pn=Ryyan%20Safar&cu=INR" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
+            <a id="upiLink" href="#" target="_blank" rel="noopener noreferrer" style="margin-bottom: 0;">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -782,7 +792,7 @@
                         </svg>
                         support with upi
                     </div>
-                    <span class="upi-id">safarryyan@oksbi</span>
+                    <span id="upiDisplay" class="upi-id">loading...</span>
                 </div>
             </a>
         </div>
