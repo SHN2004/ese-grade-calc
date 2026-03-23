@@ -859,11 +859,13 @@
             });
 
             // Mobile UPI Link Injection
-            const encodedUPI = 'c2FmYXJyeXlhbi0xQG9rc2Jp'; // safarryyan-1@oksbi
+            const encodedUPI = 'c2FmYXJyeXlhbi0xQG9rc2Jp'; 
+            const encodedName = 'Unl5YW4gU2FmYXI='; // Base64 for 'Ryyan Safar'
             const decodedUPI = atob(encodedUPI);
+            const decodedName = atob(encodedName);
             const upiMobileLink = document.getElementById('upiMobileLink');
             if (upiMobileLink) {
-                upiMobileLink.href = `upi://pay?pa=${decodedUPI}&pn=Ryyan%20Safar&cu=INR`;
+                upiMobileLink.href = `upi://pay?pa=${decodedUPI}&pn=${encodeURIComponent(decodedName)}&cu=INR`;
             }
         });
 
