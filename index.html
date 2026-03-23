@@ -538,13 +538,6 @@
             color: #00ffff;
         }
 
-        .modal-subtitle {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #666;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
         .qr-wrapper {
             width: 100%;
             max-width: 280px;
@@ -558,10 +551,10 @@
         }
 
         #qrImage {
-            width: 140% !important; /* Zoom in */
+            width: 110% !important; /* Adjust zoom for new screenshot */
             max-width: none !important;
             position: absolute;
-            top: 52%; /* Center on the QR section */
+            top: 48%; /* Adjust center for new screenshot */
             left: 50%;
             transform: translate(-50%, -50%);
             object-fit: cover;
@@ -576,6 +569,14 @@
             margin-bottom: 20px;
             text-transform: lowercase;
         }
+
+        .modal-subtitle {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
 
         .modal-subtitle {
             font-size: 11px;
@@ -865,7 +866,7 @@
             });
 
             // Mobile UPI Link Injection
-            const encodedUPI = 'c2FmYXJyeXlhbi0xQG9rc2Jp'; // safarryyan-1@oksbi from the image
+            const encodedUPI = 'c2FmYXJyeXlhbi0xQG9rc2Jp'; // safarryyan-1@oksbi
             const decodedUPI = atob(encodedUPI);
             const upiMobileLink = document.getElementById('upiMobileLink');
             if (upiMobileLink) {
@@ -924,7 +925,7 @@
             <span class="modal-close" onclick="toggleQR(false)">&times;</span>
             <div class="modal-title">scan the qr</div>
             <div class="qr-wrapper">
-                <img src="PHOTO-2026-03-23-20-03-17.jpg" alt="UPI QR Code" id="qrImage">
+                <img src="Screenshot 2026-03-23 at 20.14.10.png" alt="UPI QR Code" id="qrImage">
             </div>
             <div class="modal-subtitle">scan with any upi app</div>
         </div>
