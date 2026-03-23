@@ -1,73 +1,62 @@
-# ESE Grade Calculator 🎓
+# ESE Grade Calc 🎓
 
-A minimalist, responsive, and sleek web tool to calculate your End Semester Examination (ESE) mark requirements based on your current sessional (internal) marks. Built specifically for "nammude pareekshakal" to quickly figure out how much you need to score to hit your target grade or simply pass the course.
+A premium, high-performance web utility for college students to navigate the complexities of sessional marks, End Semester Exams (ESE), attendance tracking, and CGPA projections. 
 
-<p align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-</p>
+Built with a **Cyberpunk / JetBrains Mono** aesthetic, this tool is designed for students who value both precision and style.
 
 ---
 
-## 🚀 Features
+## 🚀 The Suite
 
-- **Sleek Interface**: Built with an elegant, terminal-inspired dark mode aesthetic using Inter and JetBrains Mono fonts.
-- **Dynamic Calculation**: Instantly calculates the required ESE marks for every possible grade (S, A+, A, B+, B, C+, C, D, P).
-- **Course Presets**: 
-  - **Theory Courses**: 50 Max Sessional, 100 Max ESE.
-  - **Integrated Courses**: 150 Max Sessional, 100 Max ESE.
-  - **Lab Courses**: 75 Max Sessional, 75 Max ESE.
-- **Real-time Feedback**: Highlights minimum marks needed to pass and warns you if a certain grade is mathematically impossible based on your sessionals.
-- **Save Multiple Subjects**: Add all your current semester subjects and see a comprehensive overview in one go.
+### 1. Grade Calculator (Target Strategy)
+- **Classic Theory & Lab Support**: Pre-configured for standard university marks (50/100, 75/75, etc.).
+- **Dynamic Thresholding**: Real-time calculation of minimum ESE marks required for every grade from **P (5.5)** to **S (10)**.
+- **Impossible Grade Alerts**: Instantly flags grades that are mathematically unreachable based on current sessional performance.
+- **Fail-Safe Warnings**: Highlights the absolute minimum ESE threshold (e.g., 40%) required to pass, regardless of sessionals.
 
-## 🛠 Usage
+### 2. Attendance Tracker (Bunk Management)
+- **Threshold Analysis**: Default 75% threshold with customizable targets.
+- **Safe Misses Counter**: Tells you exactly how many more classes you can skip *right now* while staying safe.
+- **Recovery Logic**: If you're in the red, it calculates the exact number of **consecutive** classes you must attend to cross back into the safe zone.
+- **Projection Grid**: A granular 10-class future projection showing how your % evolves with every single class/miss combo.
 
-1. **Access the App**: Since this is a static webpage, simply open `index.html` in your favorite web browser. You can also host it via GitHub Pages.
-2. **Setup a Subject**: 
-    - Click one of the quick-presets (`theory course`, `integrated course`, or `lab course`) to automatically fill max marks.
-    - Enter the `subject_name` (e.g. EC600A-B2).
-    - Enter your `current_marks` (sessional marks). *Tip: You can check RSMS for your current sessional marks before calculating.*
-3. **Calculate**: Click **add subject**. Data is instantly tabulated into a detailed "Grades required" card showing:
-    - Target Percentage (%)
-    - Grade Point (GP)
-    - Minimum ESE required to lock that specific grade
-4. **Edit on the fly**: Made a mistake or want to experiment? Quickly update current marks or max sessionals using the inline inputs at the bottom of the subject card.
-
-## 📊 Grading Logic
-
-The calculator relies on percentage-based grading logic:
-
-| Grade | GP  | Target % |
-|-------|-----|----------|
-| S     | 10  | 90%      |
-| A+    | 9.0 | 85%      |
-| A     | 8.5 | 80%      |
-| B+    | 8.0 | 75%      |
-| B     | 7.5 | 70%      |
-| C+    | 7.0 | 65%      |
-| C     | 6.5 | 60%      |
-| D     | 6.0 | 55%      |
-| P     | 5.5 | 50%      |
-
-*Note: The app will let you know if a certain grade is "impossible", or alert you if you need a specific minimum passing requirement (e.g. 40/100) in your ESE to pass the subject entirely.*
-
-## 💻 Tech Stack
-
-- **HTML5**: Semantic and clean document structure.
-- **CSS3**: No external libraries or bloated frameworks. Pure CSS with Flexbox/Grid layouts, custom variables, and sleek hover transitions. 
-- **Vanilla JavaScript**: Lightweight and fast client-side scripting for instant calculations and DOM manipulation.
-
-## ☕ Support
-
-*“coded with claude - cuz enikk padikkanam and enikk samayam illa”* 
-
-If this tool saved your life during finals or helped you strategize your study sessions, consider buying me a coffee!
-
-<a href="https://buymeacoffee.com/ryyansafar" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
-</a>
+### 3. CGPA Calculator (Future Forecasting)
+- **By Semester (Macro)**: Quickly add your SGPA and credits from each semester to see your overall standing.
+- **By Subject (Micro)**: Add individual subjects with custom credits and grade points for precise semester-end plotting.
+- **Auto-Fill Integration**: The subject-mode automatically pulls "base" data from your entered semester history for seamless transitions.
+- **Grade Point Lookup**: Standardized mapping for S/A+/A/B+/B/C+/C/D/P points included.
 
 ---
 
-**Author**: ryyan safar
+## 🎨 Design & Interaction
+- **Cinematic Header**: Features a terminal-style blinking cursor and custom typography hierarchy.
+- **Rainbow Glow**: A premium linear-gradient top bar providing constant visual depth.
+- **Glassmorphism**: Subtle translucent cards with glowing border-left indicators (Green for Safe, Red for Danger, Cyan for Info).
+- **Responsive & Sticky**: Tab-based navigation system with a sticky navbar for quick context switching on mobile and desktop.
+- **Micro-Animations**: Smooth hover transitions, blink animations, and interactive state changes.
+
+---
+
+## 🛠 Technical Details
+- **Architecture**: Single-page application (SPA) architecture for zero-latency interactions.
+- **Engine**: Vanilla JavaScript (No Bloat). Pure logic-driven DOM manipulation.
+- **Layout**: CSS Grid and Flexbox for a robust, mobile-first responsive design.
+- **Fonts**: Inter (UI) & JetBrains Mono (Data/Monospace).
+- **Deployment**: Optimized for Vercel/GitHub Pages with zero external dependencies.
+
+---
+
+## ☕ Support the Dev
+
+*"coded with claude — cuz enikk padikkanam and enikk samayam illa"*
+
+If this tool helped you survive a semester or plan your bunks effectively, consider supporting the caffeine fund:
+
+- **Portfolio**: [ryyansafar.github.io](https://ryyansafar.github.io)
+- **Donate**: [Buy Me A Chai ☕](https://razorpay.me/@ryyansafar)
+
+---
+
+**Developed by Ryyan Safar**
+> [!NOTE]
+> This tool is for projection only. Always cross-verify your marks and attendance on the official university portal (RSMS).
