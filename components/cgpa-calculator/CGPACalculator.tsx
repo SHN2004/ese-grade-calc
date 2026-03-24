@@ -1,0 +1,566 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { cgpaGradeLabel, calculateCGPA } from '@/lib/calculators/cgpa';
+import type { CGPAEntry, CGPASubjectSetup } from '@/lib/types';
+
+const HELP_KEY = 'grade-calc-help-state';
+type Mode = 'semester' | 'subject';
+
+export default function CGPACalculator() {
+  const [mode, setMode] = useState<Mode>('semester');
+  const [entries, setEntries] = useState<CGPAEntry[]>([]);
+  const [subjectSetup, setSubjectSetup] = useState<CGPASubjectSetup | null>(null);
+  const [currentSubjects, setCurrentSubjects] = useState<CGPAEntry[]>([]);
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  // Semester form
+  const [semName, setSemName] = useState('');
+  const [sgpa, setSgpa] = useState('');
+  const [semCredits, setSemCredits] = useState('');
+
+  // Subject setup
+  const [prevCGPA, setPrevCGPA] = useState('');
+  const [prevCredits, setPrevCredits] = useState('');
+  const [numSubjects, setNumSubjects] = useState('');
+  const [autoFillMsg, setAutoFillMsg] = useState('');
+
+  // Subject entry
+  const [subName, setSubName] = useState('');
+  const [subGP, setSubGP] = useState('');
+  const [subCredits, setSubCredits] = useState('');
+
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HELP_KEY) || '{}');
+      if (typeof saved.cgpa === 'boolean') setHelpOpen(saved.cgpa);
+    } catch {}
+  }, []);
+
+  const toggleHelp = () => {
+    setHelpOpen((prev) => {
+      const next = !prev;
+      try {
+        const saved = JSON.parse(localStorage.getItem(HELP_KEY) || '{}');
+        localStorage.setItem(HELP_KEY, JSON.stringify({ ...saved, cgpa: next }));
+      } catch {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    if (helpOpen) {
+      el.hidden = false;
+      el.style.maxHeight = '0px';
+      el.offsetHeight;
+      el.style.maxHeight = `${el.scrollHeight}px`;
+      const tid = setTimeout(() => { el.style.maxHeight = 'none'; }, 300);
+      return () => clearTimeout(tid);
+    } else {
+      el.style.maxHeight = `${el.scrollHeight}px`;
+      el.offsetHeight;
+      el.style.maxHeight = '0px';
+      const tid = setTimeout(() => { el.hidden = true; }, 300);
+      return () => clearTimeout(tid);
+    }
+  }, [helpOpen]);
+
+  // Auto-fill subject setup from semester entries
+  const populateSubjectSetup = (entriesSnapshot: CGPAEntry[]) => {
+    if (entriesSnapshot.length > 0) {
+      const { cgpa, totalCredits } = calculateCGPA(entriesSnapshot);
+      setPrevCGPA(cgpa.toFixed(2));
+      setPrevCredits(String(totalCredits));
+      const names = entriesSnapshot.map((e) => e.label).join(', ');
+      setAutoFillMsg(
+        `↑ auto-filled from your semester data (${names}) — cgpa: ${cgpa.toFixed(2)}, total credits: ${totalCredits}. just add the subject count below and hit let's go.`
+      );
+    } else {
+      setPrevCGPA('');
+      setPrevCredits('');
+      setAutoFillMsg('');
+    }
+  };
+
+  const switchMode = (m: Mode) => {
+    setMode(m);
+    if (m === 'subject') populateSubjectSetup(entries);
+  };
+
+  // Semester mode actions
+  const addSemester = () => {
+    const n = semName.trim();
+    const gp = parseFloat(sgpa);
+    const cr = parseFloat(semCredits);
+    if (!n || isNaN(gp) || isNaN(cr)) { alert('fill all the fields bro'); return; }
+    if (gp < 0 || gp > 10) { alert('sgpa has to be between 0 and 10. are you okay?'); return; }
+    if (cr <= 0) { alert('credits cant be zero or negative lol'); return; }
+    setEntries((prev) => [...prev, { id: crypto.randomUUID(), label: n, gp, credits: cr }]);
+    setSemName('');
+    setSgpa('');
+    setSemCredits('');
+  };
+
+  const deleteSemEntry = (id: string) => setEntries((prev) => prev.filter((e) => e.id !== id));
+
+  const updateSemEntry = (id: string, field: 'gp' | 'credits', value: string) => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
+    setEntries((prev) => prev.map((e) => e.id === id ? { ...e, [field]: num } : e));
+  };
+
+  // Subject mode — setup step
+  const startSubjectMode = () => {
+    const pc = parseFloat(prevCGPA) || 0;
+    const pcr = parseFloat(prevCredits) || 0;
+    const ns = parseInt(numSubjects);
+    if (isNaN(ns) || ns <= 0) { alert('how many subjects this sem bro?'); return; }
+    if (pc < 0 || pc > 10) { alert('that cgpa doesnt look right lol'); return; }
+    if (pcr < 0) { alert('credits cant be negative'); return; }
+    if (pc > 0 && pcr === 0) {
+      alert('if you have a cgpa, you must have some credits too. put the total credits from all previous sems');
+      return;
+    }
+    setSubjectSetup({ prevCGPA: pc, prevCredits: pcr, totalSubjects: ns });
+    setCurrentSubjects([]);
+  };
+
+  const addSubject = () => {
+    if (!subjectSetup) return;
+    if (currentSubjects.length >= subjectSetup.totalSubjects) {
+      alert('you already added all the subjects! hit "change setup" if you made a mistake');
+      return;
+    }
+    const n = subName.trim();
+    const gp = parseFloat(subGP);
+    const cr = parseFloat(subCredits);
+    if (!n || isNaN(gp) || isNaN(cr)) { alert('fill all the fields bro'); return; }
+    if (gp < 0 || gp > 10) { alert('grade point has to be between 0 and 10. are you okay?'); return; }
+    if (cr <= 0) { alert('credits cant be zero or negative lol'); return; }
+    setCurrentSubjects((prev) => [...prev, { id: crypto.randomUUID(), label: n, gp, credits: cr }]);
+    setSubName('');
+    setSubGP('');
+    setSubCredits('');
+  };
+
+  const deleteSubject = (id: string) => setCurrentSubjects((prev) => prev.filter((e) => e.id !== id));
+
+  const updateSubject = (id: string, field: 'gp' | 'credits', value: string) => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
+    setCurrentSubjects((prev) => prev.map((e) => e.id === id ? { ...e, [field]: num } : e));
+  };
+
+  const resetSubjectMode = () => {
+    setSubjectSetup(null);
+    setCurrentSubjects([]);
+    populateSubjectSetup(entries);
+  };
+
+  // Compute CGPA for display
+  let cgpaResult: { cgpa: number; totalCredits: number; weightedSum: number } | null = null;
+  let isComplete = false;
+
+  if (mode === 'semester' && entries.length > 0) {
+    cgpaResult = calculateCGPA(entries);
+    isComplete = true;
+  } else if (mode === 'subject' && subjectSetup && currentSubjects.length > 0) {
+    const { prevCGPA: pc, prevCredits: pcr, totalSubjects } = subjectSetup;
+    isComplete = currentSubjects.length === totalSubjects;
+    const prevW = pc * pcr;
+    const semCGPA = calculateCGPA(currentSubjects);
+    cgpaResult = {
+      cgpa: (pcr + semCGPA.totalCredits) > 0
+        ? (prevW + semCGPA.weightedSum) / (pcr + semCGPA.totalCredits)
+        : 0,
+      totalCredits: pcr + semCGPA.totalCredits,
+      weightedSum: prevW + semCGPA.weightedSum,
+    };
+  }
+
+  const progressMsg = subjectSetup
+    ? currentSubjects.length === 0
+      ? `0 / ${subjectSetup.totalSubjects} subjects added. start adding below →`
+      : currentSubjects.length < subjectSetup.totalSubjects
+        ? `${currentSubjects.length} / ${subjectSetup.totalSubjects} done. ${subjectSetup.totalSubjects - currentSubjects.length} more to go.`
+        : `all ${subjectSetup.totalSubjects} done! scroll down to see your cgpa ↓`
+    : '';
+
+  return (
+    <div>
+      <div className="add-section add-section--cgpa">
+        <div className="section-toolbar">
+          <span className="section-help-status">{helpOpen ? 'tips visible' : 'tips hidden'}</span>
+          <button type="button" className={`btn-help${helpOpen ? ' is-open' : ''}`}
+            aria-expanded={helpOpen} onClick={toggleHelp}>
+            {helpOpen ? 'hide help' : '? help me'}
+          </button>
+        </div>
+
+        <div ref={panelRef} className={`help-panel${helpOpen ? ' is-open' : ''}`} hidden={!helpOpen}>
+          <div className="help-panel-title">help loaded</div>
+          <div className="help-block">
+            <div className="help-block-title">cgpa basics</div>
+            <ul className="help-list">
+              <li className="help-line"><strong>what even is cgpa?</strong> it&apos;s just a weighted average of all your grade points, weighted by credits. nothing magical.</li>
+              <li className="help-line"><strong>grade point lookup:</strong> S = 10 · A+ = 9 · A = 8.5 · B+ = 8 · B = 7.5 · C+ = 7 · C = 6.5 · D = 6 · P = 5.5</li>
+              <li className="help-line"><strong>credits:</strong> the number next to each subject in your syllabus. theory = 3 or 4, labs = 1 or 2. check RSMS.</li>
+              <li className="help-line"><strong>sgpa:</strong> your semester GPA. it&apos;s on your grade card or RSMS results page.</li>
+            </ul>
+          </div>
+          <div className="help-block">
+            <div className="help-block-title">recommended flow</div>
+            <ul className="help-list">
+              <li className="help-line"><strong>step 1:</strong> click <strong>by semester</strong>. add each completed semester with its SGPA and total credits.</li>
+              <li className="help-line"><strong>step 2:</strong> click <strong>by subject</strong>. your previous CGPA and total credits auto-fill from step 1.</li>
+              <li className="help-line"><strong>step 3:</strong> enter how many subjects you have this semester, then hit <strong>let&apos;s go</strong>.</li>
+              <li className="help-line"><strong>step 4:</strong> add each subject one by one with name, grade point, and credits.</li>
+              <li className="help-line"><strong>step 5:</strong> once all subjects are entered, the updated CGPA appears fully.</li>
+              <li className="help-line"><strong>first semester?</strong> skip step 1, go straight to <strong>by subject</strong>, and use 0 for previous CGPA and previous credits.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Mode toggle */}
+        <div className="preset-buttons">
+          <button className="btn-preset"
+            style={mode === 'semester' ? { borderColor: '#ffaa00', color: '#ffaa00' } : {}}
+            onClick={() => switchMode('semester')}>
+            by semester (recommended)
+          </button>
+          <button className="btn-preset"
+            style={mode === 'subject' ? { borderColor: '#ffaa00', color: '#ffaa00' } : {}}
+            onClick={() => switchMode('subject')}>
+            by subject (tedious)
+          </button>
+        </div>
+
+        {/* Semester form */}
+        {mode === 'semester' && (
+          <div>
+            <div style={{ fontFamily: 'var(--font-jetbrains-mono,monospace)', fontSize: 13, color: '#555', marginBottom: 12 }}>
+              → find your SGPA on your grade card or RSMS portal. one row per semester, that&apos;s it.
+            </div>
+            <div className="form-grid form-grid--4">
+              <div className="field">
+                <label>semester (e.g. S3, S5)</label>
+                <input type="text" value={semName} onChange={(e) => setSemName(e.target.value)}
+                  placeholder="S3" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+              </div>
+              <div className="field">
+                <label>sgpa (from grade card)</label>
+                <input type="number" value={sgpa} onChange={(e) => setSgpa(e.target.value)}
+                  placeholder="7.8" step="0.01" min="0" max="10" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+              </div>
+              <div className="field">
+                <label>total credits that sem</label>
+                <input type="number" value={semCredits} onChange={(e) => setSemCredits(e.target.value)}
+                  placeholder="22" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+              </div>
+              <div className="field">
+                <label>&nbsp;</label>
+                <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={addSemester}>
+                  add sem
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Subject mode */}
+        {mode === 'subject' && (
+          <div>
+            {/* Setup step */}
+            {!subjectSetup && (
+              <div>
+                {autoFillMsg && (
+                  <div style={{ fontFamily: 'var(--font-jetbrains-mono,monospace)', fontSize: 13, color: '#00ffff', background: '#001a1a', border: '1px solid #003333', padding: '10px 14px', marginBottom: 12, lineHeight: 1.6 }}>
+                    {autoFillMsg}
+                  </div>
+                )}
+                {!autoFillMsg && (
+                  <div style={{ fontFamily: 'var(--font-jetbrains-mono,monospace)', fontSize: 13, color: '#555', marginBottom: 12 }}>
+                    → tell us where you currently stand. just three fields and you&apos;re in.
+                  </div>
+                )}
+                <div className="form-grid form-grid--setup">
+                  <div className="field">
+                    <label>your cgpa so far (put 0 if s1/s2)</label>
+                    <input type="number" value={prevCGPA} onChange={(e) => setPrevCGPA(e.target.value)}
+                      placeholder="7.5" step="0.01" min="0" max="10" />
+                  </div>
+                  <div className="field">
+                    <label>total credits earned so far (0 if s1/s2)</label>
+                    <input type="number" value={prevCredits} onChange={(e) => setPrevCredits(e.target.value)}
+                      placeholder="80" min="0" />
+                  </div>
+                  <div className="field">
+                    <label>how many subjects this sem?</label>
+                    <input type="number" value={numSubjects} onChange={(e) => setNumSubjects(e.target.value)}
+                      placeholder="6" min="1" max="20" onKeyDown={(e) => e.key === 'Enter' && startSubjectMode()} />
+                  </div>
+                  <div className="field">
+                    <label>&nbsp;</label>
+                    <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={startSubjectMode}>
+                      let&apos;s go →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Entry step */}
+            {subjectSetup && (
+              <div>
+                <div style={{ fontFamily: 'var(--font-jetbrains-mono,monospace)', fontSize: 14, color: '#ffaa00', padding: '10px 0', marginBottom: 12, borderBottom: '1px solid #1a1a1a' }}>
+                  {progressMsg}
+                </div>
+                <div className="form-grid form-grid--4">
+                  <div className="field">
+                    <label>subject name</label>
+                    <input type="text" value={subName} onChange={(e) => setSubName(e.target.value)}
+                      placeholder="Signals & Systems" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
+                  </div>
+                  <div className="field">
+                    <label>grade point</label>
+                    <input type="number" value={subGP} onChange={(e) => setSubGP(e.target.value)}
+                      placeholder="8.5" step="0.5" min="0" max="10" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
+                  </div>
+                  <div className="field">
+                    <label>credits</label>
+                    <input type="number" value={subCredits} onChange={(e) => setSubCredits(e.target.value)}
+                      placeholder="4" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
+                  </div>
+                  <div className="field">
+                    <label>&nbsp;</label>
+                    <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }}
+                      disabled={currentSubjects.length >= subjectSetup.totalSubjects}
+                      onClick={addSubject}>
+                      add
+                    </button>
+                  </div>
+                </div>
+                <div style={{ fontFamily: 'var(--font-jetbrains-mono,monospace)', fontSize: 13, color: '#555', marginTop: 10, letterSpacing: '0.5px' }}>
+                  S = 10 &nbsp;·&nbsp; A+ = 9 &nbsp;·&nbsp; A = 8.5 &nbsp;·&nbsp; B+ = 8 &nbsp;·&nbsp; B = 7.5 &nbsp;·&nbsp; C+ = 7 &nbsp;·&nbsp; C = 6.5 &nbsp;·&nbsp; D = 6 &nbsp;·&nbsp; P = 5.5
+                </div>
+                <button className="btn-preset" style={{ marginTop: 12 }} onClick={resetSubjectMode}>
+                  ← change setup
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* CGPA Result Banner */}
+      {cgpaResult && (
+        <div style={{
+          display: 'block',
+          background: '#111',
+          borderLeft: '3px solid #ffaa00',
+          padding: '22px 26px',
+          marginBottom: 20,
+          fontFamily: 'var(--font-jetbrains-mono,monospace)',
+          opacity: isComplete ? 1 : 0.35,
+          transition: 'opacity 0.2s',
+        }}>
+          <div style={{ fontSize: 13, color: '#555', marginBottom: 10 }}>your cgpa (so far):</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, flexWrap: 'wrap' }}>
+            <span style={{ color: '#ffaa00', fontSize: 48, fontWeight: 700, letterSpacing: -2 }}>
+              {isComplete ? cgpaResult.cgpa.toFixed(2) : '...'}
+            </span>
+            <span style={{ fontSize: 15, color: '#888', fontStyle: 'italic' }}>
+              {isComplete ? cgpaGradeLabel(cgpaResult.cgpa) : '— add all subjects first'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 32, marginTop: 14, fontSize: 14, flexWrap: 'wrap', color: '#555' }}>
+            <span>credits counted: <span style={{ color: '#e0e0e0' }}>{cgpaResult.totalCredits}</span></span>
+            <span>
+              sems / subjects:{' '}
+              <span style={{ color: '#e0e0e0' }}>
+                {mode === 'semester'
+                  ? `${entries.length} sem(s)`
+                  : subjectSetup
+                    ? `${currentSubjects.length} / ${subjectSetup.totalSubjects} subjects`
+                    : '0'}
+              </span>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Entries table */}
+      <div className="subjects-grid">
+        {mode === 'semester' && entries.length === 0 && (
+          <div className="empty-state">nothing here yet. add a semester up there and watch the magic happen.</div>
+        )}
+        {mode === 'semester' && entries.length > 0 && (
+          <SemesterTable
+            entries={entries}
+            cgpaResult={cgpaResult!}
+            onDelete={deleteSemEntry}
+            onUpdate={updateSemEntry}
+          />
+        )}
+        {mode === 'subject' && (!subjectSetup || currentSubjects.length === 0) && (
+          <div className="empty-state">nothing here yet. fill in the setup above first.</div>
+        )}
+        {mode === 'subject' && subjectSetup && currentSubjects.length > 0 && (
+          <SubjectTable
+            setup={subjectSetup}
+            subjects={currentSubjects}
+            isComplete={isComplete}
+            onDelete={deleteSubject}
+            onUpdate={updateSubject}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SemesterTable({
+  entries,
+  cgpaResult,
+  onDelete,
+  onUpdate,
+}: {
+  entries: CGPAEntry[];
+  cgpaResult: { cgpa: number; totalCredits: number; weightedSum: number };
+  onDelete: (id: string) => void;
+  onUpdate: (id: string, field: 'gp' | 'credits', value: string) => void;
+}) {
+  return (
+    <div className="subject" style={{ borderLeftColor: '#ffaa00' }}>
+      <div className="subject-top">
+        <div className="subject-name" style={{ color: '#ffaa00' }}>semesters</div>
+      </div>
+      <div className="grades-table">
+        <table>
+          <thead>
+            <tr>
+              <th>semester</th>
+              <th>sgpa</th>
+              <th>credits</th>
+              <th>sgpa × credits</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.map((e) => (
+              <tr key={e.id}>
+                <td style={{ color: '#e0e0e0' }}>{e.label}</td>
+                <td>
+                  <input type="number" className="cgpa-edit-input" defaultValue={e.gp.toFixed(2)}
+                    step="0.01" min="0" max="10"
+                    onChange={(ev) => onUpdate(e.id, 'gp', ev.target.value)} title="edit sgpa" />
+                </td>
+                <td>
+                  <input type="number" className="cgpa-edit-input" defaultValue={e.credits}
+                    step="0.5" min="0.5"
+                    onChange={(ev) => onUpdate(e.id, 'credits', ev.target.value)} title="edit credits" />
+                </td>
+                <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{(e.gp * e.credits).toFixed(2)}</td>
+                <td><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ borderTop: '1px solid #333' }}>
+              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)', padding: '10px 12px' }}>cgpa</td>
+              <td><span style={{ color: '#ffaa00', fontWeight: 700, fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.cgpa.toFixed(2)}</span></td>
+              <td style={{ color: '#e0e0e0', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.totalCredits}</td>
+              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.weightedSum.toFixed(2)}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function SubjectTable({
+  setup,
+  subjects,
+  isComplete,
+  onDelete,
+  onUpdate,
+}: {
+  setup: CGPASubjectSetup;
+  subjects: CGPAEntry[];
+  isComplete: boolean;
+  onDelete: (id: string) => void;
+  onUpdate: (id: string, field: 'gp' | 'credits', value: string) => void;
+}) {
+  const { prevCGPA, prevCredits, totalSubjects } = setup;
+  const prevW = prevCGPA * prevCredits;
+  const semData = calculateCGPA(subjects);
+  const totalCredits = prevCredits + semData.totalCredits;
+  const totalWeighted = prevW + semData.weightedSum;
+  const cgpa = totalCredits > 0 ? totalWeighted / totalCredits : 0;
+
+  return (
+    <div className="subject" style={{ borderLeftColor: isComplete ? '#ffaa00' : '#333' }}>
+      <div className="subject-top">
+        <div className="subject-name" style={{ color: isComplete ? '#ffaa00' : '#666' }}>
+          {isComplete ? 'this semester — all done ✓' : `this semester — ${subjects.length} / ${totalSubjects} added`}
+        </div>
+      </div>
+      <div className="grades-table">
+        <table>
+          <thead>
+            <tr>
+              <th>subject</th>
+              <th>grade point</th>
+              <th>credits</th>
+              <th>gp × credits</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {prevCredits > 0 && (
+              <tr style={{ borderBottom: '1px solid #222' }}>
+                <td style={{ color: '#555', fontStyle: 'italic', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>previous sems (base)</td>
+                <td><span style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{prevCGPA.toFixed(2)}</span></td>
+                <td style={{ color: '#555' }}>{prevCredits}</td>
+                <td style={{ color: '#444', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{prevW.toFixed(2)}</td>
+                <td></td>
+              </tr>
+            )}
+            {subjects.map((e) => (
+              <tr key={e.id}>
+                <td style={{ color: '#e0e0e0' }}>{e.label}</td>
+                <td>
+                  <input type="number" className="cgpa-edit-input" defaultValue={e.gp.toFixed(2)}
+                    step="0.5" min="0" max="10"
+                    onChange={(ev) => onUpdate(e.id, 'gp', ev.target.value)} title="edit grade point" />
+                </td>
+                <td>
+                  <input type="number" className="cgpa-edit-input" defaultValue={e.credits}
+                    step="0.5" min="0.5"
+                    onChange={(ev) => onUpdate(e.id, 'credits', ev.target.value)} title="edit credits" />
+                </td>
+                <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{(e.gp * e.credits).toFixed(2)}</td>
+                <td><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ borderTop: '1px solid #333' }}>
+              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)', padding: '10px 12px' }}>updated cgpa</td>
+              <td><span style={{ color: isComplete ? '#ffaa00' : '#555', fontWeight: 700, fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{isComplete ? cgpa.toFixed(2) : '?'}</span></td>
+              <td style={{ color: '#e0e0e0', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{totalCredits}</td>
+              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{totalWeighted.toFixed(2)}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
