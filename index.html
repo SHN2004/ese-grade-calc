@@ -23,7 +23,7 @@
             font-family: 'Inter', sans-serif;
             background: #0a0a0a;
             color: #e0e0e0;
-            padding: 24px;
+            padding: clamp(12px, 3vw, 24px);
             min-height: 100vh;
             font-size: 16px;
             line-height: 1.7;
@@ -54,7 +54,7 @@
 
         .brand h1 {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 38px;
+            font-size: clamp(24px, 5vw, 38px);
             font-weight: 700;
             color: #00ffff;
             letter-spacing: -2px;
@@ -210,6 +210,14 @@
             align-items: end;
         }
 
+        .form-grid--4 {
+            grid-template-columns: 2fr 1fr 1fr 140px;
+        }
+
+        .form-grid--setup {
+            grid-template-columns: 1fr 1fr 1fr 140px;
+        }
+
         .field {
             display: flex;
             flex-direction: column;
@@ -358,6 +366,8 @@
 
         .grades-table {
             padding: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -533,7 +543,7 @@
             .brand h1 { font-size: 28px; }
             .brand .author { font-size: 13px; }
             .subtitle { font-size: 12px; }
-            .form-grid { grid-template-columns: 1fr; }
+            .form-grid, .form-grid--4, .form-grid--setup { grid-template-columns: 1fr; }
             .stats-bar { flex-direction: column; gap: 8px; font-size: 13px; }
             table { font-size: 12px; }
             th { font-size: 11px; }
@@ -541,6 +551,55 @@
             .subject-name { font-size: 16px; }
             .pass-alert { font-size: 13px; }
             .info-box li { font-size: 13px; }
+        }
+
+        @media (max-width: 480px) {
+            .brand {
+                flex-wrap: wrap;
+                gap: 6px 12px;
+            }
+
+            .subject-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .btn-delete {
+                align-self: flex-end;
+            }
+
+            .edit-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 18px;
+            }
+
+            .qr-wrapper {
+                max-width: 220px;
+                height: 220px;
+            }
+
+            input {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .add-section,
+            .info-box,
+            .grades-table,
+            .stats-bar,
+            .pass-alert {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            input {
+                font-size: 16px;
+            }
         }
 
         .footer {
@@ -624,6 +683,47 @@
             opacity: 0.6;
         }
 
+        @media (max-width: 480px) {
+            .tabs {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                max-width: none;
+                padding: 0 8px;
+                overflow-x: visible;
+            }
+
+            .tab {
+                min-width: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 6px;
+                text-align: center;
+                white-space: nowrap;
+                line-height: 1.2;
+                font-size: 12px;
+            }
+
+            .tab.active::before {
+                content: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .tabs-nav {
+                margin: 0 -12px 20px;
+            }
+
+            .tabs {
+                padding: 0 12px;
+            }
+
+            .tab {
+                padding: 12px 4px;
+                font-size: 11px;
+            }
+        }
+
         .tab-content {
             display: none;
         }
@@ -697,9 +797,9 @@
 
     <div class="tabs-nav">
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('grades')">grade calculator</div>
-            <div class="tab" onclick="switchTab('attendance')">attendance calculator</div>
-            <div class="tab" onclick="switchTab('cgpa')">cgpa calculator</div>
+            <div class="tab active" onclick="switchTab('grades')">grade calc</div>
+            <div class="tab" onclick="switchTab('attendance')">attendance calc</div>
+            <div class="tab" onclick="switchTab('cgpa')">cgpa calc</div>
         </div>
     </div>
 
@@ -753,7 +853,7 @@
                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #ff55bb; margin-bottom: 12px;">
                     → total marks (default 150) split however the dept decided. just enter what you got.
                 </div>
-                <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                <div class="form-grid form-grid--4">
                     <div class="field">
                         <label>project name / course code</label>
                         <input type="text" id="miniName" placeholder="Mini Project S5">
@@ -816,7 +916,7 @@
                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; margin-bottom: 12px;">
                     → find your SGPA on your grade card or RSMS portal. one row per semester, that's it.
                 </div>
-                <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                <div class="form-grid form-grid--4">
                     <div class="field">
                         <label>semester (e.g. S3, S5)</label>
                         <input type="text" id="cgpaSemName" placeholder="S3">
@@ -845,7 +945,7 @@
                     <div id="cgpaSetupHint" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; margin-bottom: 12px;">
                         → tell us where you currently stand. just three fields and you're in.
                     </div>
-                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 140px;">
+                    <div class="form-grid form-grid--setup">
                         <div class="field">
                             <label>your cgpa so far (put 0 if s1/s2)</label>
                             <input type="number" id="cgpaPrevCGPA" placeholder="7.5" step="0.01" min="0" max="10">
@@ -868,7 +968,7 @@
                 <!-- Step 2: Subject entry (shown after setup) -->
                 <div id="cgpaSubjectEntry" style="display: none;">
                     <div id="cgpaSubjectProgress" style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #ffaa00; padding: 10px 0; margin-bottom: 12px; border-bottom: 1px solid #1a1a1a;"></div>
-                    <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                    <div class="form-grid form-grid--4">
                         <div class="field">
                             <label>subject name</label>
                             <input type="text" id="cgpaSubName" placeholder="Signals & Systems">
@@ -926,7 +1026,7 @@
         </div>
 
         <div class="add-section" style="border-left: 1px solid #1a1a1a;">
-            <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 1fr 140px;">
+            <div class="form-grid">
                 <div class="field">
                     <label>subject name</label>
                     <input type="text" id="attSubjectName" placeholder="Digital Electronics">
@@ -1644,7 +1744,7 @@
 
                     <div class="pass-alert ${statusClass}">${statusMsg}</div>
                     
-                    <div class="grades-table" style="overflow-x: auto;">
+                    <div class="grades-table">
                         <div class="info-title" style="margin-top: 10px; font-size: 11px;">attendance projection grid (total classes →)</div>
                         <table style="min-width: 600px;">
                             <thead>
