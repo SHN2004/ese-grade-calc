@@ -178,6 +178,31 @@
             border-color: #00ffff;
         }
 
+        .btn-preset-mini {
+            background: transparent;
+            color: #ff55bb;
+            border: 1px solid #ff55bb;
+            padding: 8px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: mini-pulse 2.5s ease-in-out infinite;
+        }
+
+        .btn-preset-mini:hover, .btn-preset-mini.active {
+            background: rgba(255, 85, 187, 0.12);
+            color: #ff88cc;
+            border-color: #ff88cc;
+            box-shadow: 0 0 10px rgba(255, 85, 187, 0.35);
+            animation: none;
+        }
+
+        @keyframes mini-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 85, 187, 0); }
+            50% { box-shadow: 0 0 8px 2px rgba(255, 85, 187, 0.3); }
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr 140px;
@@ -693,30 +718,58 @@
 
         <div class="add-section">
             <div class="preset-buttons">
-                <button class="btn-preset" onclick="setPreset('theory')">theory course</button>
-                <button class="btn-preset" onclick="setPreset('integrated')">integrated course</button>
-                <button class="btn-preset" onclick="setPreset('lab')">lab course</button>
+                <button class="btn-preset" id="presetTheory" onclick="setPreset('theory')">theory course</button>
+                <button class="btn-preset" id="presetIntegrated" onclick="setPreset('integrated')">integrated course</button>
+                <button class="btn-preset" id="presetLab" onclick="setPreset('lab')">lab course</button>
+                <button class="btn-preset-mini" id="presetMini" onclick="setPreset('mini')">✦ mini project</button>
             </div>
-            <div class="form-grid">
-                <div class="field">
-                    <label>subject name (whatever they call it)</label>
-                    <input type="text" id="subjectName" placeholder="EC600A-B2">
+            <!-- Standard form (theory / integrated / lab) -->
+            <div id="standardForm">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>subject name (whatever they call it)</label>
+                        <input type="text" id="subjectName" placeholder="EC600A-B2">
+                    </div>
+                    <div class="field">
+                        <label>your marks right now</label>
+                        <input type="number" id="currentMarks" placeholder="39">
+                    </div>
+                    <div class="field">
+                        <label>max sessional marks</label>
+                        <input type="number" id="maxSessional" value="50">
+                    </div>
+                    <div class="field">
+                        <label>max ese marks</label>
+                        <input type="number" id="maxESE" value="100">
+                    </div>
+                    <div class="field">
+                        <label>&nbsp;</label>
+                        <button class="btn-add" onclick="addSubject()">add subject</button>
+                    </div>
                 </div>
-                <div class="field">
-                    <label>your marks right now</label>
-                    <input type="number" id="currentMarks" placeholder="39">
+            </div>
+            <!-- Mini project form -->
+            <div id="miniProjectForm" style="display:none;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #ff55bb; margin-bottom: 12px;">
+                    → total marks (default 150) split however the dept decided. just enter what you got.
                 </div>
-                <div class="field">
-                    <label>max sessional marks</label>
-                    <input type="number" id="maxSessional" value="50">
-                </div>
-                <div class="field">
-                    <label>max ese marks</label>
-                    <input type="number" id="maxESE" value="100">
-                </div>
-                <div class="field">
-                    <label>&nbsp;</label>
-                    <button class="btn-add" onclick="addSubject()">add subject</button>
+                <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 140px;">
+                    <div class="field">
+                        <label>project name / course code</label>
+                        <input type="text" id="miniName" placeholder="Mini Project S5">
+                    </div>
+                    <div class="field">
+                        <label>marks received</label>
+                        <input type="number" id="miniMarksReceived" placeholder="112">
+                    </div>
+                    <div class="field">
+                        <label>total marks</label>
+                        <input type="number" id="miniTotalMarks" value="150">
+                    </div>
+                    <div class="field">
+                        <label>&nbsp;</label>
+                        <button class="btn-add" onclick="addMiniProjectSubject()" style="background: #ff55bb; color: #0a0a0a;">add project</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -930,17 +983,54 @@
         function setPreset(type) {
             const maxSessionalInput = document.getElementById('maxSessional');
             const maxESEInput = document.getElementById('maxESE');
+            const standardForm = document.getElementById('standardForm');
+            const miniForm = document.getElementById('miniProjectForm');
+
+            // Update active state on all preset buttons
+            ['presetTheory','presetIntegrated','presetLab'].forEach(id => {
+                document.getElementById(id).style.cssText = '';
+            });
+            document.getElementById('presetMini').classList.remove('active');
+
+            if (type === 'mini') {
+                standardForm.style.display = 'none';
+                miniForm.style.display = '';
+                document.getElementById('presetMini').classList.add('active');
+                return;
+            }
+
+            standardForm.style.display = '';
+            miniForm.style.display = 'none';
 
             if (type === 'theory') {
                 maxSessionalInput.value = 50;
                 maxESEInput.value = 100;
+                document.getElementById('presetTheory').style.cssText = 'border-color:#00ffff;color:#00ffff;';
             } else if (type === 'integrated') {
                 maxSessionalInput.value = 150;
                 maxESEInput.value = 100;
+                document.getElementById('presetIntegrated').style.cssText = 'border-color:#00ffff;color:#00ffff;';
             } else if (type === 'lab') {
                 maxSessionalInput.value = 75;
                 maxESEInput.value = 75;
+                document.getElementById('presetLab').style.cssText = 'border-color:#00ffff;color:#00ffff;';
             }
+        }
+
+        function addMiniProjectSubject() {
+            const name = document.getElementById('miniName').value.trim();
+            const received = parseFloat(document.getElementById('miniMarksReceived').value);
+            const total = parseFloat(document.getElementById('miniTotalMarks').value);
+
+            if (!name || isNaN(received) || isNaN(total)) { alert('fill all the fields bro'); return; }
+            if (total <= 0) { alert('total marks cant be zero or negative'); return; }
+            if (received > total) { alert('marks received cant exceed total marks'); return; }
+            if (received < 0) { alert('marks cant be negative'); return; }
+
+            subjects.push({ name, received, total, isMini: true });
+            document.getElementById('miniName').value = '';
+            document.getElementById('miniMarksReceived').value = '';
+            renderSubjects();
         }
 
         function calculateRequiredESE(currentMarks, maxSessional, maxESE, targetPercentage) {
@@ -1002,6 +1092,43 @@
             container.innerHTML = '';
 
             subjects.forEach((subject, index) => {
+
+                // ── Mini Project card ──────────────────────────────────────
+                if (subject.isMini) {
+                    const pct = (subject.received / subject.total) * 100;
+                    const hasPassed = pct >= 50;
+                    const grade = gradeThresholds.find(g => pct >= g.min) || null;
+
+                    const passClass = hasPassed ? 'pass-alert safe' : 'pass-alert danger';
+                    const passMsg = hasPassed
+                        ? `passed ✓ — ${pct.toFixed(1)}% overall`
+                        : `failed ✗ — need at least 50% (${Math.ceil(subject.total * 0.5)} / ${subject.total}) to pass`;
+
+                    const gradeTag = grade
+                        ? `<span class="grade-tag ${grade.color}">${grade.grade}</span>`
+                        : `<span style="color:#ff4444; font-family:'JetBrains Mono',monospace; font-size:14px;">—</span>`;
+
+                    const card = document.createElement('div');
+                    card.className = 'subject';
+                    card.style.borderLeftColor = '#ff55bb';
+                    card.innerHTML = `
+                        <div class="subject-top">
+                            <div class="subject-name" style="color:#ff55bb;">✦ ${subject.name}</div>
+                            <button class="btn-delete" onclick="deleteSubject(${index})">delete</button>
+                        </div>
+                        <div class="stats-bar">
+                            <div class="stat-item"><span>marks:</span><span style="color:#ff55bb;">${subject.received} / ${subject.total}</span></div>
+                            <div class="stat-item"><span>percentage:</span><span style="color:#ff55bb;">${pct.toFixed(2)}%</span></div>
+                            <div class="stat-item"><span>grade:</span><span>${gradeTag}</span></div>
+                            <div class="stat-item"><span>grade_point:</span><span style="color:#ff55bb;">${grade ? grade.point : '—'}</span></div>
+                        </div>
+                        <div class="${passClass}">${passMsg}</div>
+                    `;
+                    container.appendChild(card);
+                    return;
+                }
+
+                // ── Standard (theory / integrated / lab) card ─────────────
                 const totalMarks = subject.maxSess + subject.maxESE;
                 const currentPercentage = ((subject.current / totalMarks) * 100).toFixed(1);
                 const minESEThreshold = 0.4 * subject.maxESE;
