@@ -463,6 +463,29 @@
             border-color: #00ffff;
         }
 
+        .cgpa-edit-input {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            color: #ffaa00;
+            padding: 5px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            width: 72px;
+            transition: all 0.15s;
+        }
+
+        .cgpa-edit-input:focus {
+            outline: none;
+            border-color: #ffaa00;
+            box-shadow: 0 0 0 1px #ffaa00;
+        }
+
+        .cgpa-edit-input::-webkit-inner-spin-button,
+        .cgpa-edit-input::-webkit-outer-spin-button {
+            opacity: 0.3;
+        }
+
         .empty-state {
             text-align: center;
             padding: 80px 20px;
@@ -1241,6 +1264,21 @@
             renderCGPA();
         }
 
+        function updateCGPAEntry(index, field, value) {
+            const parsed = parseFloat(value);
+            if (isNaN(parsed)) return;
+            cgpaEntries[index][field] = parsed;
+            renderCGPA();
+        }
+
+        function updateCGPASubject(index, field, value) {
+            const parsed = parseFloat(value);
+            if (isNaN(parsed)) return;
+            cgpaCurrentSubjects[index][field] = parsed;
+            updateSubjectProgress();
+            renderCGPA();
+        }
+
         function resetCGPASubjectMode() {
             cgpaSubjectSetup = null;
             cgpaCurrentSubjects = [];
@@ -1302,8 +1340,8 @@
                 const rowsHTML = cgpaEntries.map((e, i) => `
                     <tr>
                         <td style="color: #e0e0e0;">${e.label}</td>
-                        <td><span style="color: #ffaa00; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${e.gp.toFixed(2)}</span></td>
-                        <td style="color: #666;">${e.credits}</td>
+                        <td><input type="number" class="cgpa-edit-input" value="${e.gp.toFixed(2)}" step="0.01" min="0" max="10" onchange="updateCGPAEntry(${i}, 'gp', this.value)" title="edit sgpa"></td>
+                        <td><input type="number" class="cgpa-edit-input" value="${e.credits}" step="0.5" min="0.5" onchange="updateCGPAEntry(${i}, 'credits', this.value)" title="edit credits"></td>
                         <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${(e.gp * e.credits).toFixed(2)}</td>
                         <td><button class="btn-delete" onclick="deleteCGPAEntry(${i})">delete</button></td>
                     </tr>
@@ -1381,8 +1419,8 @@
             const rowsHTML = cgpaCurrentSubjects.map((e, i) => `
                 <tr>
                     <td style="color: #e0e0e0;">${e.label}</td>
-                    <td><span style="color: #ffaa00; font-weight: 700; font-family: 'JetBrains Mono', monospace;">${e.gp.toFixed(2)}</span></td>
-                    <td style="color: #666;">${e.credits}</td>
+                    <td><input type="number" class="cgpa-edit-input" value="${e.gp.toFixed(2)}" step="0.5" min="0" max="10" onchange="updateCGPASubject(${i}, 'gp', this.value)" title="edit grade point"></td>
+                    <td><input type="number" class="cgpa-edit-input" value="${e.credits}" step="0.5" min="0.5" onchange="updateCGPASubject(${i}, 'credits', this.value)" title="edit credits"></td>
                     <td style="color: #555; font-family: 'JetBrains Mono', monospace;">${(e.gp * e.credits).toFixed(2)}</td>
                     <td><button class="btn-delete" onclick="deleteCGPASubject(${i})">delete</button></td>
                 </tr>
