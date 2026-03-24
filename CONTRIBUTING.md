@@ -1,6 +1,6 @@
 # contributing to help-me-survive-college
 
-> hey, glad you're here. this is a small tool built for KTU students — keep that spirit in mind.
+> hey, glad you're here. this is a small tool built for college students everywhere — keep that spirit in mind.
 
 ---
 

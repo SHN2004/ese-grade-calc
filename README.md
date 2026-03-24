@@ -1,8 +1,8 @@
-# ESE Grade Calc 🎓
+# help-me-survive-college
 
-A premium, high-performance web utility for college students to navigate the complexities of sessional marks, End Semester Exams (ESE), attendance tracking, and CGPA projections. 
+a tool for college students to stop guessing and start knowing — ESE targets, attendance limits, CGPA projections, all in one place.
 
-Built with a **Cyberpunk / JetBrains Mono** aesthetic, this tool is designed for students who value both precision and style.
+built with a dark terminal aesthetic because we suffer in style.
 
 ---
 
