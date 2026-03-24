@@ -60,3 +60,17 @@ If this tool helped you survive a semester or plan your bunks effectively, consi
 **Developed by Ryyan Safar**
 > [!NOTE]
 > This tool is for projection only. Always cross-verify your marks and attendance on the official university portal (RSMS).
+
+---
+
+## 🤝 Contributing
+
+PRs are welcome. Bug fixes, new subject types, KTU-specific additions, UI improvements — all good.
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
+
+---
+
+## 📄 License
+
+[MIT](./LICENSE) — © 2026 Ryyan Safar
