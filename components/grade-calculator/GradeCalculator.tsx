@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { GRADE_THRESHOLDS, calculateRequiredESE } from '@/lib/calculators/grade';
 import type { AnySubject, Subject, MiniProjectSubject } from '@/lib/types';
+import EmptyState from '@/components/ui/EmptyState';
 
 const HELP_KEY = 'grade-calc-help-state';
 
@@ -222,7 +223,7 @@ export default function GradeCalculator() {
       {/* Subjects list */}
       <div className="subjects-grid">
         {subjects.length === 0 ? (
-          <div className="empty-state">nothing here yet. add a subject above and face your destiny.</div>
+          <EmptyState />
         ) : (
           subjects.map((subject) =>
             subject.isMini

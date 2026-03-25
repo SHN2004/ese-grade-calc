@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { calculateSafeMisses, calculateRecovery } from '@/lib/calculators/attendance';
 import type { AttendanceSubject } from '@/lib/types';
+import EmptyState from '@/components/ui/EmptyState';
 
 const HELP_KEY = 'grade-calc-help-state';
 
@@ -125,7 +126,7 @@ export default function AttendanceCalculator() {
 
       <div className="subjects-grid">
         {subjects.length === 0 ? (
-          <div className="empty-state">no subjects added yet. blissful ignorance.</div>
+          <EmptyState />
         ) : (
           subjects.map((s) => (
             <AttendanceCard key={s.id} subject={s} onDelete={deleteSubject} />

@@ -11,6 +11,7 @@ const tools = [
   {
     href: '/grade-calculator',
     accent: '#00ffff',
+    glow: 'rgba(0, 255, 255, 0.12)',
     label: 'grade calculator',
     tagline: 'ESE target strategy',
     description:
@@ -20,6 +21,7 @@ const tools = [
   {
     href: '/attendance-calculator',
     accent: '#ff00ff',
+    glow: 'rgba(255, 0, 255, 0.12)',
     label: 'attendance calculator',
     tagline: 'bunk management',
     description:
@@ -29,6 +31,7 @@ const tools = [
   {
     href: '/cgpa-calculator',
     accent: '#ffaa00',
+    glow: 'rgba(255, 170, 0, 0.12)',
     label: 'cgpa calculator',
     tagline: 'cumulative gpa forecasting',
     description:
@@ -41,66 +44,30 @@ export default function HomePage() {
   return (
     <main className="container">
       <div style={{ marginBottom: 40 }}>
-        <div style={{
-          fontFamily: 'var(--font-jetbrains-mono, monospace)',
-          fontSize: 13,
-          color: '#555',
-          marginBottom: 24,
-          lineHeight: 1.8,
-        }}>
+        <div className="hub-intro">
           → pick a calculator below. no account, no ads, no nonsense.
         </div>
 
-        <div style={{ display: 'grid', gap: 16 }}>
+        <div className="tool-cards-grid">
           {tools.map((tool) => (
-            <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: '#111',
-                borderLeft: `3px solid ${tool.accent}`,
-                padding: '24px 28px',
-                transition: 'background 0.2s',
-                cursor: 'pointer',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-                  <span style={{
-                    fontFamily: 'var(--font-jetbrains-mono, monospace)',
-                    fontSize: 20,
-                    fontWeight: 700,
-                    color: tool.accent,
-                  }}>
-                    {tool.label}
-                  </span>
-                  <span style={{
-                    fontFamily: 'var(--font-jetbrains-mono, monospace)',
-                    fontSize: 12,
-                    color: '#444',
-                    letterSpacing: '0.5px',
-                  }}>
-                    / {tool.tagline}
-                  </span>
-                </div>
-                <p style={{
-                  fontFamily: 'var(--font-inter, sans-serif)',
-                  fontSize: 14,
-                  color: '#888',
-                  lineHeight: 1.7,
-                  marginBottom: 12,
-                }}>
-                  {tool.description}
-                </p>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {tool.keywords.map((kw) => (
-                    <span key={kw} style={{
-                      fontFamily: 'var(--font-jetbrains-mono, monospace)',
-                      fontSize: 11,
-                      color: '#444',
-                      border: '1px solid #222',
-                      padding: '3px 8px',
-                    }}>
-                      {kw}
-                    </span>
-                  ))}
-                </div>
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="tool-card"
+              style={{
+                '--card-accent': tool.accent,
+                '--card-glow': tool.glow,
+              } as React.CSSProperties}
+            >
+              <div className="tool-card-header">
+                <span className="tool-card-label">{tool.label}</span>
+                <span className="tool-card-tagline">/ {tool.tagline}</span>
+              </div>
+              <p className="tool-card-desc">{tool.description}</p>
+              <div className="kw-tags">
+                {tool.keywords.map((kw) => (
+                  <span key={kw} className="kw-tag">{kw}</span>
+                ))}
               </div>
             </Link>
           ))}

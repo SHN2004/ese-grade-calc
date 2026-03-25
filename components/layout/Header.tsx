@@ -1,3 +1,5 @@
+import RotatingTagline from './RotatingTagline';
+
 export default function Header() {
   return (
     <div className="header">
@@ -7,7 +9,8 @@ export default function Header() {
         <span className="author">ryyan safar</span>
       </div>
       <div className="subtitle">
-        &gt; calculation tools for nammude pareekshakal — because RSMS won&apos;t tell you straight
+        &gt; calculation tools for nammude pareekshakal —{' '}
+        <RotatingTagline />
         <span className="cursor">_</span>
       </div>
     </div>
