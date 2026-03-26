@@ -426,6 +426,7 @@ input::placeholder { color: #3a3a3a; }
   background: #111;
   border-left: 3px solid #00ffff;
   padding: 0;
+  scroll-margin-top: 96px;
   transition: all 0.2s;
   animation: cardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

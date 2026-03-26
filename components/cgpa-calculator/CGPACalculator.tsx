@@ -3,11 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { cgpaGradeLabel, calculateCGPA } from '@/lib/calculators/cgpa';
 import type { CGPAEntry, CGPASubjectSetup } from '@/lib/types';
+import { revealElement } from '@/lib/dom/revealElement';
+import { useAppHaptics } from '@/lib/hooks/useAppHaptics';
+import { createId } from '@/lib/utils/createId';
 
 const HELP_KEY = 'grade-calc-help-state';
 type Mode = 'semester' | 'subject';
 
 export default function CGPACalculator() {
+  const haptics = useAppHaptics();
   const [mode, setMode] = useState<Mode>('semester');
   const [entries, setEntries] = useState<CGPAEntry[]>([]);
   const [subjectSetup, setSubjectSetup] = useState<CGPASubjectSetup | null>(null);
@@ -31,6 +35,15 @@ export default function CGPACalculator() {
   const [subCredits, setSubCredits] = useState('');
 
   const panelRef = useRef<HTMLDivElement>(null);
+  const semNameInputRef = useRef<HTMLInputElement>(null);
+  const sgpaInputRef = useRef<HTMLInputElement>(null);
+  const semCreditsInputRef = useRef<HTMLInputElement>(null);
+  const prevCGPAInputRef = useRef<HTMLInputElement>(null);
+  const prevCreditsInputRef = useRef<HTMLInputElement>(null);
+  const numSubjectsInputRef = useRef<HTMLInputElement>(null);
+  const subNameInputRef = useRef<HTMLInputElement>(null);
+  const subGPInputRef = useRef<HTMLInputElement>(null);
+  const subCreditsInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
@@ -39,15 +52,19 @@ export default function CGPACalculator() {
     } catch {}
   }, []);
 
+  const showValidationError = (message: string) => {
+    haptics.error();
+    alert(message);
+  };
+
   const toggleHelp = () => {
-    setHelpOpen((prev) => {
-      const next = !prev;
-      try {
-        const saved = JSON.parse(localStorage.getItem(HELP_KEY) || '{}');
-        localStorage.setItem(HELP_KEY, JSON.stringify({ ...saved, cgpa: next }));
-      } catch {}
-      return next;
-    });
+    const next = !helpOpen;
+    setHelpOpen(next);
+    try {
+      const saved = JSON.parse(localStorage.getItem(HELP_KEY) || '{}');
+      localStorage.setItem(HELP_KEY, JSON.stringify({ ...saved, cgpa: next }));
+    } catch {}
+    haptics.light();
   };
 
   useEffect(() => {
@@ -87,25 +104,41 @@ export default function CGPACalculator() {
   };
 
   const switchMode = (m: Mode) => {
+    if (m === mode) return;
     setMode(m);
+    haptics.selection();
     if (m === 'subject') populateSubjectSetup(entries);
   };
 
   // Semester mode actions
   const addSemester = () => {
-    const n = semName.trim();
-    const gp = parseFloat(sgpa);
-    const cr = parseFloat(semCredits);
-    if (!n || isNaN(gp) || isNaN(cr)) { alert('fill all the fields bro'); return; }
-    if (gp < 0 || gp > 10) { alert('sgpa has to be between 0 and 10. are you okay?'); return; }
-    if (cr <= 0) { alert('credits cant be zero or negative lol'); return; }
-    setEntries((prev) => [...prev, { id: crypto.randomUUID(), label: n, gp, credits: cr }]);
+    const n = (semNameInputRef.current?.value ?? semName).trim();
+    const gp = parseFloat(sgpaInputRef.current?.value ?? sgpa);
+    const cr = parseFloat(semCreditsInputRef.current?.value ?? semCredits);
+    if (!n || isNaN(gp) || isNaN(cr)) {
+      showValidationError('fill all the fields bro');
+      return;
+    }
+    if (gp < 0 || gp > 10) {
+      showValidationError('sgpa has to be between 0 and 10. are you okay?');
+      return;
+    }
+    if (cr <= 0) {
+      showValidationError('credits cant be zero or negative lol');
+      return;
+    }
+    setEntries((prev) => [...prev, { id: createId(), label: n, gp, credits: cr }]);
     setSemName('');
     setSgpa('');
     setSemCredits('');
+    haptics.success();
+    revealElement('cgpa-semester-results');
   };
 
-  const deleteSemEntry = (id: string) => setEntries((prev) => prev.filter((e) => e.id !== id));
+  const deleteSemEntry = (id: string) => {
+    haptics.warning();
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+  };
 
   const updateSemEntry = (id: string, field: 'gp' | 'credits', value: string) => {
     const num = parseFloat(value);
@@ -115,39 +148,63 @@ export default function CGPACalculator() {
 
   // Subject mode — setup step
   const startSubjectMode = () => {
-    const pc = parseFloat(prevCGPA) || 0;
-    const pcr = parseFloat(prevCredits) || 0;
-    const ns = parseInt(numSubjects);
-    if (isNaN(ns) || ns <= 0) { alert('how many subjects this sem bro?'); return; }
-    if (pc < 0 || pc > 10) { alert('that cgpa doesnt look right lol'); return; }
-    if (pcr < 0) { alert('credits cant be negative'); return; }
+    const pc = parseFloat(prevCGPAInputRef.current?.value ?? prevCGPA) || 0;
+    const pcr = parseFloat(prevCreditsInputRef.current?.value ?? prevCredits) || 0;
+    const ns = parseInt(numSubjectsInputRef.current?.value ?? numSubjects);
+    if (isNaN(ns) || ns <= 0) {
+      showValidationError('how many subjects this sem bro?');
+      return;
+    }
+    if (pc < 0 || pc > 10) {
+      showValidationError('that cgpa doesnt look right lol');
+      return;
+    }
+    if (pcr < 0) {
+      showValidationError('credits cant be negative');
+      return;
+    }
     if (pc > 0 && pcr === 0) {
-      alert('if you have a cgpa, you must have some credits too. put the total credits from all previous sems');
+      showValidationError('if you have a cgpa, you must have some credits too. put the total credits from all previous sems');
       return;
     }
     setSubjectSetup({ prevCGPA: pc, prevCredits: pcr, totalSubjects: ns });
     setCurrentSubjects([]);
+    haptics.medium();
   };
 
   const addSubject = () => {
     if (!subjectSetup) return;
     if (currentSubjects.length >= subjectSetup.totalSubjects) {
-      alert('you already added all the subjects! hit "change setup" if you made a mistake');
+      showValidationError('you already added all the subjects! hit "change setup" if you made a mistake');
       return;
     }
-    const n = subName.trim();
-    const gp = parseFloat(subGP);
-    const cr = parseFloat(subCredits);
-    if (!n || isNaN(gp) || isNaN(cr)) { alert('fill all the fields bro'); return; }
-    if (gp < 0 || gp > 10) { alert('grade point has to be between 0 and 10. are you okay?'); return; }
-    if (cr <= 0) { alert('credits cant be zero or negative lol'); return; }
-    setCurrentSubjects((prev) => [...prev, { id: crypto.randomUUID(), label: n, gp, credits: cr }]);
+    const n = (subNameInputRef.current?.value ?? subName).trim();
+    const gp = parseFloat(subGPInputRef.current?.value ?? subGP);
+    const cr = parseFloat(subCreditsInputRef.current?.value ?? subCredits);
+    if (!n || isNaN(gp) || isNaN(cr)) {
+      showValidationError('fill all the fields bro');
+      return;
+    }
+    if (gp < 0 || gp > 10) {
+      showValidationError('grade point has to be between 0 and 10. are you okay?');
+      return;
+    }
+    if (cr <= 0) {
+      showValidationError('credits cant be zero or negative lol');
+      return;
+    }
+    setCurrentSubjects((prev) => [...prev, { id: createId(), label: n, gp, credits: cr }]);
     setSubName('');
     setSubGP('');
     setSubCredits('');
+    haptics.success();
+    revealElement('cgpa-subject-results');
   };
 
-  const deleteSubject = (id: string) => setCurrentSubjects((prev) => prev.filter((e) => e.id !== id));
+  const deleteSubject = (id: string) => {
+    haptics.warning();
+    setCurrentSubjects((prev) => prev.filter((e) => e.id !== id));
+  };
 
   const updateSubject = (id: string, field: 'gp' | 'credits', value: string) => {
     const num = parseFloat(value);
@@ -156,6 +213,7 @@ export default function CGPACalculator() {
   };
 
   const resetSubjectMode = () => {
+    haptics.selection();
     setSubjectSetup(null);
     setCurrentSubjects([]);
     populateSubjectSetup(entries);
@@ -248,25 +306,25 @@ export default function CGPACalculator() {
             <div className="form-grid form-grid--4">
               <div className="field">
                 <label>semester (e.g. S3, S5)</label>
-                <input type="text" value={semName} onChange={(e) => setSemName(e.target.value)}
-                  placeholder="S3" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
-              </div>
-              <div className="field">
-                <label>sgpa (from grade card)</label>
-                <input type="number" value={sgpa} onChange={(e) => setSgpa(e.target.value)}
-                  placeholder="7.8" step="0.01" min="0" max="10" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
-              </div>
-              <div className="field">
-                <label>total credits that sem</label>
-                <input type="number" value={semCredits} onChange={(e) => setSemCredits(e.target.value)}
-                  placeholder="22" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
-              </div>
-              <div className="field">
-                <label>&nbsp;</label>
-                <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={addSemester}>
-                  add sem
-                </button>
-              </div>
+                    <input ref={semNameInputRef} type="text" value={semName} onChange={(e) => setSemName(e.target.value)}
+                      placeholder="S3" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+                  </div>
+                  <div className="field">
+                    <label>sgpa (from grade card)</label>
+                    <input ref={sgpaInputRef} type="number" value={sgpa} onChange={(e) => setSgpa(e.target.value)}
+                      placeholder="7.8" step="0.01" min="0" max="10" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+                  </div>
+                  <div className="field">
+                    <label>total credits that sem</label>
+                    <input ref={semCreditsInputRef} type="number" value={semCredits} onChange={(e) => setSemCredits(e.target.value)}
+                      placeholder="22" onKeyDown={(e) => e.key === 'Enter' && addSemester()} />
+                  </div>
+                  <div className="field">
+                    <label>&nbsp;</label>
+                    <button type="button" className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={addSemester}>
+                      add sem
+                    </button>
+                  </div>
             </div>
           </div>
         )}
@@ -290,22 +348,22 @@ export default function CGPACalculator() {
                 <div className="form-grid form-grid--setup">
                   <div className="field">
                     <label>your cgpa so far (put 0 if s1/s2)</label>
-                    <input type="number" value={prevCGPA} onChange={(e) => setPrevCGPA(e.target.value)}
+                    <input ref={prevCGPAInputRef} type="number" value={prevCGPA} onChange={(e) => setPrevCGPA(e.target.value)}
                       placeholder="7.5" step="0.01" min="0" max="10" />
                   </div>
                   <div className="field">
                     <label>total credits earned so far (0 if s1/s2)</label>
-                    <input type="number" value={prevCredits} onChange={(e) => setPrevCredits(e.target.value)}
+                    <input ref={prevCreditsInputRef} type="number" value={prevCredits} onChange={(e) => setPrevCredits(e.target.value)}
                       placeholder="80" min="0" />
                   </div>
                   <div className="field">
                     <label>how many subjects this sem?</label>
-                    <input type="number" value={numSubjects} onChange={(e) => setNumSubjects(e.target.value)}
+                    <input ref={numSubjectsInputRef} type="number" value={numSubjects} onChange={(e) => setNumSubjects(e.target.value)}
                       placeholder="6" min="1" max="20" onKeyDown={(e) => e.key === 'Enter' && startSubjectMode()} />
                   </div>
                   <div className="field">
                     <label>&nbsp;</label>
-                    <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={startSubjectMode}>
+                    <button type="button" className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }} onClick={startSubjectMode}>
                       let&apos;s go →
                     </button>
                   </div>
@@ -322,22 +380,22 @@ export default function CGPACalculator() {
                 <div className="form-grid form-grid--4">
                   <div className="field">
                     <label>subject name</label>
-                    <input type="text" value={subName} onChange={(e) => setSubName(e.target.value)}
+                    <input ref={subNameInputRef} type="text" value={subName} onChange={(e) => setSubName(e.target.value)}
                       placeholder="Signals & Systems" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
                   </div>
                   <div className="field">
                     <label>grade point</label>
-                    <input type="number" value={subGP} onChange={(e) => setSubGP(e.target.value)}
+                    <input ref={subGPInputRef} type="number" value={subGP} onChange={(e) => setSubGP(e.target.value)}
                       placeholder="8.5" step="0.5" min="0" max="10" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
                   </div>
                   <div className="field">
                     <label>credits</label>
-                    <input type="number" value={subCredits} onChange={(e) => setSubCredits(e.target.value)}
+                    <input ref={subCreditsInputRef} type="number" value={subCredits} onChange={(e) => setSubCredits(e.target.value)}
                       placeholder="4" onKeyDown={(e) => e.key === 'Enter' && addSubject()} />
                   </div>
                   <div className="field">
                     <label>&nbsp;</label>
-                    <button className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }}
+                    <button type="button" className="btn-add" style={{ background: '#ffaa00', color: '#0a0a0a' }}
                       disabled={currentSubjects.length >= subjectSetup.totalSubjects}
                       onClick={addSubject}>
                       add
@@ -435,7 +493,7 @@ function SemesterTable({
   onUpdate: (id: string, field: 'gp' | 'credits', value: string) => void;
 }) {
   return (
-    <div className="subject" style={{ borderLeftColor: '#ffaa00' }}>
+    <div className="subject" id="cgpa-semester-results" style={{ borderLeftColor: '#ffaa00' }}>
       <div className="subject-top">
         <div className="subject-name" style={{ color: '#ffaa00' }}>semesters</div>
       </div>
@@ -505,7 +563,7 @@ function SubjectTable({
   const cgpa = totalCredits > 0 ? totalWeighted / totalCredits : 0;
 
   return (
-    <div className="subject" style={{ borderLeftColor: isComplete ? '#ffaa00' : '#333' }}>
+    <div className="subject" id="cgpa-subject-results" style={{ borderLeftColor: isComplete ? '#ffaa00' : '#333' }}>
       <div className="subject-top">
         <div className="subject-name" style={{ color: isComplete ? '#ffaa00' : '#666' }}>
           {isComplete ? 'this semester — all done ✓' : `this semester — ${subjects.length} / ${totalSubjects} added`}
