@@ -416,37 +416,31 @@ export default function CGPACalculator() {
 
       {/* CGPA Result Banner */}
       {cgpaResult && (
-        <div style={{
-          display: 'block',
-          background: '#111',
-          borderLeft: '3px solid #ffaa00',
-          padding: '22px 26px',
-          marginBottom: 20,
-          fontFamily: 'var(--font-jetbrains-mono,monospace)',
-          opacity: isComplete ? 1 : 0.35,
-          transition: 'opacity 0.2s',
-        }}>
-          <div style={{ fontSize: 13, color: '#555', marginBottom: 10 }}>your cgpa (so far):</div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, flexWrap: 'wrap' }}>
-            <span style={{ color: '#ffaa00', fontSize: 48, fontWeight: 700, letterSpacing: -2 }}>
+        <div className={`cgpa-overview${isComplete ? '' : ' is-pending'}`}>
+          <div className="cgpa-overview-kicker">your cgpa (so far):</div>
+          <div className="cgpa-overview-main">
+            <span className="cgpa-overview-value">
               {isComplete ? cgpaResult.cgpa.toFixed(2) : '...'}
             </span>
-            <span style={{ fontSize: 15, color: '#888', fontStyle: 'italic' }}>
-              {isComplete ? cgpaGradeLabel(cgpaResult.cgpa) : '— add all subjects first'}
+            <span className="cgpa-overview-caption">
+              {isComplete ? cgpaGradeLabel(cgpaResult.cgpa) : 'add all subjects first'}
             </span>
           </div>
-          <div style={{ display: 'flex', gap: 32, marginTop: 14, fontSize: 14, flexWrap: 'wrap', color: '#555' }}>
-            <span>credits counted: <span style={{ color: '#e0e0e0' }}>{cgpaResult.totalCredits}</span></span>
-            <span>
-              sems / subjects:{' '}
-              <span style={{ color: '#e0e0e0' }}>
+          <div className="cgpa-overview-stats">
+            <div className="cgpa-overview-stat">
+              <span>credits counted</span>
+              <strong>{cgpaResult.totalCredits}</strong>
+            </div>
+            <div className="cgpa-overview-stat">
+              <span>sems / subjects</span>
+              <strong>
                 {mode === 'semester'
                   ? `${entries.length} sem(s)`
                   : subjectSetup
                     ? `${currentSubjects.length} / ${subjectSetup.totalSubjects} subjects`
                     : '0'}
-              </span>
-            </span>
+              </strong>
+            </div>
           </div>
         </div>
       )}
@@ -495,10 +489,13 @@ function SemesterTable({
   return (
     <div className="subject" id="cgpa-semester-results" style={{ borderLeftColor: '#ffaa00' }}>
       <div className="subject-top">
-        <div className="subject-name" style={{ color: '#ffaa00' }}>semesters</div>
+        <div>
+          <div className="subject-name" style={{ color: '#ffaa00' }}>semesters</div>
+          <div className="subject-caption">tap any number below to fix it.</div>
+        </div>
       </div>
-      <div className="grades-table">
-        <table>
+      <div className="grades-table grades-table--cgpa">
+        <table className="cgpa-table">
           <thead>
             <tr>
               <th>semester</th>
@@ -509,31 +506,35 @@ function SemesterTable({
             </tr>
           </thead>
           <tbody>
-            {entries.map((e) => (
-              <tr key={e.id}>
-                <td style={{ color: '#e0e0e0' }}>{e.label}</td>
-                <td>
+            {entries.map((e, index) => (
+              <tr key={e.id} className="cgpa-entry-row">
+                <td data-label="semester" className="cgpa-table-title-cell">
+                  <span className="cgpa-entry-label">{e.label}</span>
+                </td>
+                <td data-label="sgpa">
                   <input type="number" className="cgpa-edit-input" defaultValue={e.gp.toFixed(2)}
                     step="0.01" min="0" max="10"
                     onChange={(ev) => onUpdate(e.id, 'gp', ev.target.value)} title="edit sgpa" />
                 </td>
-                <td>
+                <td data-label="credits">
                   <input type="number" className="cgpa-edit-input" defaultValue={e.credits}
                     step="0.5" min="0.5"
                     onChange={(ev) => onUpdate(e.id, 'credits', ev.target.value)} title="edit credits" />
                 </td>
-                <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{(e.gp * e.credits).toFixed(2)}</td>
-                <td><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
+                <td data-label="sgpa x credits" className="cgpa-cell-muted">{(e.gp * e.credits).toFixed(2)}</td>
+                <td data-label="action"><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr style={{ borderTop: '1px solid #333' }}>
-              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)', padding: '10px 12px' }}>cgpa</td>
-              <td><span style={{ color: '#ffaa00', fontWeight: 700, fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.cgpa.toFixed(2)}</span></td>
-              <td style={{ color: '#e0e0e0', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.totalCredits}</td>
-              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{cgpaResult.weightedSum.toFixed(2)}</td>
-              <td></td>
+            <tr className="cgpa-summary-row">
+              <td data-label="summary" className="cgpa-table-title-cell">
+                <span className="cgpa-entry-label cgpa-entry-label--summary">cgpa</span>
+              </td>
+              <td data-label="cgpa"><span className="cgpa-value-highlight">{cgpaResult.cgpa.toFixed(2)}</span></td>
+              <td data-label="credits" className="cgpa-value-default">{cgpaResult.totalCredits}</td>
+              <td data-label="weighted" className="cgpa-cell-muted">{cgpaResult.weightedSum.toFixed(2)}</td>
+              <td />
             </tr>
           </tfoot>
         </table>
@@ -565,12 +566,15 @@ function SubjectTable({
   return (
     <div className="subject" id="cgpa-subject-results" style={{ borderLeftColor: isComplete ? '#ffaa00' : '#333' }}>
       <div className="subject-top">
-        <div className="subject-name" style={{ color: isComplete ? '#ffaa00' : '#666' }}>
-          {isComplete ? 'this semester — all done ✓' : `this semester — ${subjects.length} / ${totalSubjects} added`}
+        <div>
+          <div className="subject-name" style={{ color: isComplete ? '#ffaa00' : '#666' }}>
+            {isComplete ? 'this semester - all done ✓' : `this semester - ${subjects.length} / ${totalSubjects} added`}
+          </div>
+          <div className="subject-caption">every subject stays editable down here.</div>
         </div>
       </div>
-      <div className="grades-table">
-        <table>
+      <div className="grades-table grades-table--cgpa">
+        <table className="cgpa-table">
           <thead>
             <tr>
               <th>subject</th>
@@ -582,39 +586,49 @@ function SubjectTable({
           </thead>
           <tbody>
             {prevCredits > 0 && (
-              <tr style={{ borderBottom: '1px solid #222' }}>
-                <td style={{ color: '#555', fontStyle: 'italic', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>previous sems (base)</td>
-                <td><span style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{prevCGPA.toFixed(2)}</span></td>
-                <td style={{ color: '#555' }}>{prevCredits}</td>
-                <td style={{ color: '#444', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{prevW.toFixed(2)}</td>
-                <td></td>
+              <tr className="cgpa-base-row">
+                <td data-label="base" className="cgpa-table-title-cell">
+                  <span className="cgpa-entry-label cgpa-entry-label--base">previous sems (base)</span>
+                </td>
+                <td data-label="cgpa" className="cgpa-cell-muted">{prevCGPA.toFixed(2)}</td>
+                <td data-label="credits" className="cgpa-cell-muted">{prevCredits}</td>
+                <td data-label="weighted" className="cgpa-cell-muted">{prevW.toFixed(2)}</td>
+                <td />
               </tr>
             )}
             {subjects.map((e) => (
-              <tr key={e.id}>
-                <td style={{ color: '#e0e0e0' }}>{e.label}</td>
-                <td>
+              <tr key={e.id} className="cgpa-entry-row">
+                <td data-label="subject" className="cgpa-table-title-cell">
+                  <span className="cgpa-entry-label">{e.label}</span>
+                </td>
+                <td data-label="grade point">
                   <input type="number" className="cgpa-edit-input" defaultValue={e.gp.toFixed(2)}
                     step="0.5" min="0" max="10"
                     onChange={(ev) => onUpdate(e.id, 'gp', ev.target.value)} title="edit grade point" />
                 </td>
-                <td>
+                <td data-label="credits">
                   <input type="number" className="cgpa-edit-input" defaultValue={e.credits}
                     step="0.5" min="0.5"
                     onChange={(ev) => onUpdate(e.id, 'credits', ev.target.value)} title="edit credits" />
                 </td>
-                <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{(e.gp * e.credits).toFixed(2)}</td>
-                <td><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
+                <td data-label="gp x credits" className="cgpa-cell-muted">{(e.gp * e.credits).toFixed(2)}</td>
+                <td data-label="action"><button className="btn-delete" onClick={() => onDelete(e.id)}>delete</button></td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr style={{ borderTop: '1px solid #333' }}>
-              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)', padding: '10px 12px' }}>updated cgpa</td>
-              <td><span style={{ color: isComplete ? '#ffaa00' : '#555', fontWeight: 700, fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{isComplete ? cgpa.toFixed(2) : '?'}</span></td>
-              <td style={{ color: '#e0e0e0', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{totalCredits}</td>
-              <td style={{ color: '#555', fontFamily: 'var(--font-jetbrains-mono,monospace)' }}>{totalWeighted.toFixed(2)}</td>
-              <td></td>
+            <tr className="cgpa-summary-row">
+              <td data-label="summary" className="cgpa-table-title-cell">
+                <span className="cgpa-entry-label cgpa-entry-label--summary">updated cgpa</span>
+              </td>
+              <td data-label="cgpa">
+                <span className={isComplete ? 'cgpa-value-highlight' : 'cgpa-cell-muted'}>
+                  {isComplete ? cgpa.toFixed(2) : '?'}
+                </span>
+              </td>
+              <td data-label="credits" className="cgpa-value-default">{totalCredits}</td>
+              <td data-label="weighted" className="cgpa-cell-muted">{totalWeighted.toFixed(2)}</td>
+              <td />
             </tr>
           </tfoot>
         </table>
